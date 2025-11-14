@@ -1,0 +1,135 @@
+:root {
+  --bg: #0b1120;
+  --text: #f3f5ff;
+  --card-bg: rgba(255,255,255,0.04);
+  --grad-from: #ff62a5;
+  --grad-to: #70f0a6;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  margin: 0;
+  text-align: center;
+}
+
+.clockbar { margin-top: 20px; }
+.display {
+  font-size: 3em;
+  background: linear-gradient(90deg, var(--grad-from), var(--grad-to));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.card {
+  width: min(800px, 95%);
+  margin: auto;
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 10px 0; }
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #22293f;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+.picker { display: flex; align-items: center; gap: 8px; }
+#colorInput { width: 34px; height: 34px; border-radius: 6px; border: none; cursor: pointer; }
+
+.sep { margin: 20px 0; border: none; height: 1px; background: rgba(255,255,255,0.2); }
+
+/* Avatar & iPhone */
+.phone-demo { display: grid; justify-items: center; gap: 20px; }
+.avatar-lg { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; }
+.uploader { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+.iphone__bezel {
+  position: relative;
+  width: min(360px, 90vw);
+  aspect-ratio: 9 / 19.5;
+  border-radius: 45px;
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0,0,0,.8);
+  overflow: hidden;
+}
+.island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 36px;
+  border-radius: 20px;
+  background: #0b0b0b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+.iphone__screen {
+  position: absolute;
+  inset: 10px;
+  border-radius: 35px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Facebook app mock */
+.fb-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+.logo-badge {
+  background: #1877f2;
+  color: white;
+  font-weight: 900;
+  font-size: 20px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.fb-actions button {
+  border: none; background: #f0f2f5;
+  width: 32px; height: 32px; border-radius: 50%; margin-left: 6px;
+}
+
+.fb-composer {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+.avatar-sm { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.fake-input { flex: 1; background: #f0f2f5; border-radius: 50px; padding: 8px 12px; color: #666; }
+
+.fb-post { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+.post-head { display: flex; align-items: center; gap: 8px; }
+.name { font-weight: bold; }
+.time { font-size: 12px; color: #777; }
+.post-text { margin: 8px 0; }
+.post-media { height: 160px; border-radius: 12px; background: linear-gradient(135deg,#eaf2ff,#fceeff); }
+.post-actions { display: flex; justify-content: space-around; margin-top: 6px; color: #65676b; }
+
+.fb-tabbar {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #ddd;
+  padding: 8px 0;
+  background: #fff;
+}
+
+/* Animation */
+.flash { animation: hue 3s linear infinite; }
+@keyframes hue { from{filter:hue-rotate(0)} to{filter:hue-rotate(360deg)} }
