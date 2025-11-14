@@ -21,7 +21,15 @@ body{margin:0;background:#02040a;color:#fff;font-family:'Be Vietnam Pro',sans-se
 @keyframes rgbShift{0%{background-position:0 50%}100%{background-position:100% 50%}}
 .v-badge{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:6px;border-radius:50%;background:linear-gradient(135deg,var(--tick1),var(--tick2) 50%,var(--tick3));box-shadow:0 0 8px #1fa2ff;}
 .v-badge svg{width:60%;height:60%;color:#fff;}
-.iphone{position:relative;width:min(360px,92vw);aspect-ratio:9/19.5;border-radius:45px;background:#000;box-shadow:0 20px 60px rgba(0,0,0,.9);overflow:hidden;margin:18px auto;}
+.iphone{
+  position:relative;width:min(360px,92vw);aspect-ratio:9/19.5;border-radius:45px;
+  background:#000;box-shadow:0 0 25px var(--wave1),inset 0 0 10px var(--wave2);
+  animation:pulse 2s ease-in-out infinite;overflow:hidden;margin:18px auto;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 25px var(--wave1),inset 0 0 10px var(--wave2);}
+  50%{box-shadow:0 0 45px var(--wave2),inset 0 0 15px var(--wave1);}
+}
 .iphone__screen{position:absolute;inset:10px;border-radius:35px;background:#111;display:flex;flex-direction:column;overflow:hidden;}
 .island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:160px;height:36px;background:#000;border-radius:18px;display:flex;align-items:center;justify-content:center;transition:all .35s ease;overflow:hidden;z-index:2;}
 .island.expanded{width:88%;height:130px;border-radius:30px;background:#0c0c0c;flex-direction:column;padding:10px;}
@@ -55,7 +63,7 @@ body{margin:0;background:#02040a;color:#fff;font-family:'Be Vietnam Pro',sans-se
     <button class="btn" id="expandIsland">Mở/thu Island</button>
     <button class="btn" id="btnRainbow">Cầu vồng</button>
     <button class="btn" id="btnRGB">RGB</button>
-    <button class="btn" id="btnTheme">Theme mặc định</button>
+    <button class="btn" id="btnDefault">Mặc định</button>
   </div>
 </div>
 
@@ -76,7 +84,7 @@ body{margin:0;background:#02040a;color:#fff;font-family:'Be Vietnam Pro',sans-se
       <div class="post-head">
         <img id="postAvatar" class="avatar-sm">
         <div><div id="fbName" class="theme-text name">ApplwNgoo
-          <span class="v-badge v-badge--lg v-badge--flash"><svg viewBox="0 0 24 24"><path d="M6 12l3.5 3.5L18 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="v-badge"><svg viewBox="0 0 24 24"><path d="M6 12l3.5 3.5L18 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div><div class="theme-text time" id="postTime">Vừa xong · 🌐</div></div>
       </div>
       <div class="post-media" id="postMedia"><div class="placeholder">Chưa có video hoặc link.</div></div>
@@ -85,43 +93,39 @@ body{margin:0;background:#02040a;color:#fff;font-family:'Be Vietnam Pro',sans-se
 </div>
 
 <script>
-/* === Giờ VN === */
 function vnNow(){try{return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Ho_Chi_Minh"}))}catch{const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+7*3600000)}}
-const pad=n=>String(n).padStart(2,"0");
-function updateVN(){const d=vnNow();vnClock.textContent=pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds());vnClockBig.textContent=vnClock.textContent;vnDate.textContent=pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear();postTime.textContent="Vừa xong · 🌐 "+vnDate.textContent+" "+pad(d.getHours())+":"+pad(d.getMinutes());}
+const two=n=>String(n).padStart(2,"0");
+function updateVN(){const t=vnNow();vnClock.textContent=`${two(t.getHours())}:${two(t.getMinutes())}:${two(t.getSeconds())}`;vnClockBig.textContent=vnClock.textContent;vnDate.textContent=`${two(t.getDate())}/${two(t.getMonth()+1)}/${t.getFullYear()}`;postTime.textContent=`Vừa xong · 🌐 ${vnDate.textContent} ${two(t.getHours())}:${two(t.getMinutes())}`;}
 setInterval(updateVN,1000);updateVN();
 island.onclick=()=>island.classList.toggle("expanded");
 expandIsland.onclick=()=>island.classList.toggle("expanded");
 
-/* === Avatar mặc định và đổi === */
-function avatarSvg(txt){return"data:image/svg+xml;utf8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='${getComputedStyle(document.documentElement).getPropertyValue("--grad1")}'/><stop offset='100%' stop-color='${getComputedStyle(document.documentElement).getPropertyValue("--grad2")}'/></linearGradient></defs><rect width='100%' height='100%' fill='url(#g)'/><text x='50%' y='58%' text-anchor='middle' font-size='110' font-family='Arial' fill='white' font-weight='700'>${txt}</text></svg>`);}
-composerAvatar.src=postAvatar.src=avatarSvg("BPN");
+/* Avatar */
+function makeAvatar(){const g1=getComputedStyle(document.documentElement).getPropertyValue("--grad1"),g2=getComputedStyle(document.documentElement).getPropertyValue("--grad2");return"data:image/svg+xml;utf8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='${g1}'/><stop offset='100%' stop-color='${g2}'/></linearGradient></defs><rect width='100%' height='100%' fill='url(#g)'/><text x='50%' y='58%' text-anchor='middle' font-size='110' font-family='Arial' fill='white' font-weight='700'>BPN</text></svg>`);}
+composerAvatar.src=postAvatar.src=makeAvatar();
 avatarInput.onchange=e=>{const f=e.target.files[0];if(!f)return;const u=URL.createObjectURL(f);composerAvatar.src=postAvatar.src=u;};
 
-/* === Video / YouTube === */
-const mediaBox=document.getElementById("postMedia");
+/* Video & YouTube */
+const postMedia=document.getElementById("postMedia");
 videoInput.onchange=e=>{const f=e.target.files[0];if(!f)return;showVideo(URL.createObjectURL(f));};
 btnYT.onclick=()=>{const l=ytInput.value.trim();if(!l)return;showYT(l);};
-function clear(){mediaBox.innerHTML="";}
-function showVideo(u){clear();const wrap=document.createElement("div");wrap.className="video-wrap";const v=document.createElement("video");v.src=u;v.controls=v.autoplay=v.loop=v.playsInline=true;wrap.appendChild(v);mediaBox.appendChild(wrap);startWave(v);}
+function clear(){postMedia.innerHTML="";}
+function showVideo(u){clear();const wrap=document.createElement("div");wrap.className="video-wrap";const v=document.createElement("video");v.src=u;v.controls=v.autoplay=v.loop=v.playsInline=true;wrap.appendChild(v);postMedia.appendChild(wrap);startWave(v);}
 function ytID(u){if(u.includes("youtu.be/"))return u.split("youtu.be/")[1].split(/[?&]/)[0];const v=(u.match(/[?&]v=([^&]+)/)||[])[1];if(v)return v;const s=(u.match(/\/shorts\/([^?]+)/)||[])[1];if(s)return s;return null;}
-function showYT(u){clear();const id=ytID(u);const ifr=document.createElement("iframe");ifr.className="yt";ifr.src=`https://www.youtube.com/embed/${id}?autoplay=1&mute=1`;ifr.allow="autoplay";ifr.allowFullscreen=true;const wrap=document.createElement("div");wrap.className="video-wrap";wrap.appendChild(ifr);mediaBox.appendChild(wrap);fakeWave();}
+function showYT(u){clear();const id=ytID(u);const ifr=document.createElement("iframe");ifr.src=`https://www.youtube.com/embed/${id}?autoplay=1&mute=1`;ifr.allow="autoplay";ifr.allowFullscreen=true;const wrap=document.createElement("div");wrap.className="video-wrap";wrap.appendChild(ifr);postMedia.appendChild(wrap);fakeWave();}
 
-/* === Soundwave – thật hoặc giả lập === */
+/* Soundwave */
 const wave=document.getElementById("diWave");
 function bars(n=24){wave.innerHTML="";for(let i=0;i<n;i++){const b=document.createElement("div");b.className="bar";wave.appendChild(b);}}
 bars();
-function startWave(media){const barsEls=wave.children;const ctx=new (window.AudioContext||window.webkitAudioContext)();const src=ctx.createMediaElementSource(media);const an=ctx.createAnalyser();an.fftSize=64;src.connect(an);an.connect(ctx.destination);const buf=new Uint8Array(an.frequencyBinCount);function loop(){requestAnimationFrame(loop);an.getByteFrequencyData(buf);for(let i=0;i<barsEls.length;i++){const h=Math.max(4,buf[i]/3);barsEls[i].style.height=h+"px";const t=getComputedStyle(document.documentElement).getPropertyValue("--wave1"),b=getComputedStyle(document.documentElement).getPropertyValue("--wave2");barsEls[i].style.background=`linear-gradient(180deg,${t},${b})`;}}loop();}
+function startWave(m){const b=wave.children;const ctx=new(window.AudioContext||window.webkitAudioContext)();const src=ctx.createMediaElementSource(m);const an=ctx.createAnalyser();an.fftSize=64;src.connect(an);an.connect(ctx.destination);const buf=new Uint8Array(an.frequencyBinCount);function loop(){requestAnimationFrame(loop);an.getByteFrequencyData(buf);for(let i=0;i<b.length;i++){const h=Math.max(4,buf[i]/3);b[i].style.height=h+"px";b[i].style.background=`linear-gradient(180deg,var(--wave1),var(--wave2))`;}}loop();}
 function fakeWave(){bars();const b=[...wave.children];b.forEach((el,i)=>{el.animate([{transform:"scaleY(0.6)"},{transform:"scaleY(1)"},{transform:"scaleY(0.6)"}],{duration:800,iterations:Infinity,delay:i*30});});}
 
-/* === Đổi theme đồng bộ (Tick + Sóng + Chữ) === */
-const textEls=()=>document.querySelectorAll(".theme-text,.grad,.time,.fake-input,.name,h1");
-function applyText(cls){textEls().forEach(e=>{e.classList.remove("rainbow-text","rgb-text","theme-text");e.classList.add(cls);});}
-function setVars(a,b,c,d,e){document.documentElement.style.setProperty("--grad1",a);document.documentElement.style.setProperty("--grad2",b);document.documentElement.style.setProperty("--tick1",c);document.documentElement.style.setProperty("--tick2",d);document.documentElement.style.setProperty("--tick3",e);document.documentElement.style.setProperty("--wave1",b);document.documentElement.style.setProperty("--wave2",a);}
-btnRainbow.onclick=()=>{applyText("rainbow-text");setVars("#ff4fa8","#57ff9a","#ff4fa8","#ffd66e","#57ff9a");};
-btnRGB.onclick=()=>{applyText("rgb-text");setVars("#ff0000","#00ff00","#ff0000","#00ff00","#0000ff");};
-btnTheme.onclick=()=>{applyText("theme-text");setVars("#ff62a5","#57ff9a","#1fa2ff","#12d8fa","#1d8cf8");};
+/* Theme đồng bộ */
+function setTheme(a,b,c,d,e){document.documentElement.style.setProperty("--grad1",a);document.documentElement.style.setProperty("--grad2",b);document.documentElement.style.setProperty("--tick1",c);document.documentElement.style.setProperty("--tick2",d);document.documentElement.style.setProperty("--tick3",e);document.documentElement.style.setProperty("--wave1",b);document.documentElement.style.setProperty("--wave2",a);}
+btnRainbow.onclick=()=>setTheme("#ff4fa8","#57ff9a","#ff4fa8","#ffd66e","#57ff9a");
+btnRGB.onclick=()=>setTheme("#ff0000","#00ff00","#ff0000","#00ff00","#0000ff");
+btnDefault.onclick=()=>setTheme("#ff62a5","#57ff9a","#1fa2ff","#12d8fa","#1d8cf8");
 </script>
 </body>
 </html>
-
