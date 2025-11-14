@@ -3,11 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ApplwNgoo</title>
+  <title>ApplwNhooEm</title>
+
+  <!-- Có mạng thì dùng font này, không có vẫn hoạt động bình thường -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Lớp nền phản ứng (nhạc/giờ) -->
+  <div id="bgReact" class="bg-react" aria-hidden="true"></div>
+
+  <!-- Đồng hồ & lời chúc -->
   <header class="clockbar">
     <div class="clockbar__line"><span id="clockText"></span></div>
     <div class="clockbar__greet">
@@ -18,20 +27,24 @@
 
   <main class="container">
     <section class="card">
-      <h1 class="display gradient-text" id="heroName"></h1>
+      <!-- JS sẽ lấp FULL_NAME + tick xanh -->
+      <h1 class="display theme-text" id="heroName"></h1>
+
       <p class="lead">Xin chào — mình là <strong>ApplwNgoo</strong>.</p>
       <p class="sublead">Sinh năm <strong>2008</strong></p>
 
+      <!-- Tagline: đổi màu theo nút -->
       <nav class="tagline">
-        <a class="chip rainbow">Chịu</a>
-        <a class="chip blue">Chơi Game</a>
-        <a class="chip lime">Nghe Nhạc</a>
-        <a class="chip purple">Lọ</a>
+        <a class="chip theme-text">Yêu thích lộ</a>
+        <a class="chip theme-text">Cười môn Tiếng Anh</a>
+        <a class="chip theme-text">Li dị với môn Hóa</a>
+        <a class="chip theme-text">Hẹn hò với môn Toán</a>
       </nav>
 
+      <!-- Nhóm điều khiển màu chữ -->
       <div class="controls">
         <button class="btn" id="btnPink">Màu hồng</button>
-        <button class="btn" id="btnFlash">Nhấp nháy</button>
+        <button class="btn" id="btnFlash">Nhấp nháy (cầu vồng)</button>
         <button class="btn" id="btnRandom">Random</button>
         <div class="picker">
           <button class="btn" id="btnPick">Chọn màu</button>
@@ -39,8 +52,17 @@
         </div>
       </div>
 
+      <!-- Nhóm điều khiển nền động -->
+      <div class="controls">
+        <button class="btn" id="btnMusic">Bật chế độ nhạc</button>
+        <button class="btn" id="btnTimeAuto">Auto theo giờ (VN)</button>
+        <button class="btn" id="btnAutoOff">Tắt auto</button>
+        <span id="modeHint" class="hint"></span>
+      </div>
+
       <hr class="sep" />
 
+      <!-- Ảnh đại diện + iPhone -->
       <section class="phone-demo">
         <div class="uploader">
           <img id="avatarPreview" class="avatar-lg" alt="Ảnh đại diện" />
@@ -48,46 +70,54 @@
           <input id="avatarInput" type="file" accept="image/*" hidden>
         </div>
 
+        <!-- iPhone 14 Pro Max -->
         <div class="iphone">
           <div class="iphone__bezel">
-            <div class="island" id="island">
+            <!-- Dynamic Island (chạm để mở rộng) -->
+            <div class="island" id="island" title="Chạm để mở/thu gọn">
               <div class="island-compact">
-                <span id="vnClock" class="grad-text">--:--:--</span>
+                <span id="vnClock" class="theme-text">--:--:--</span>
               </div>
               <div class="island-expanded">
                 <div class="status-line">
                   <div class="status-icons">
-                    <svg class="ico sig" viewBox="0 0 24 24">
+                    <!-- Sóng -->
+                    <svg class="ico sig" viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M3 18h2v3H3zm4-4h2v7H7zm4-3h2v10h-2zm4-3h2v13h-2zm4-5h2v18h-2z" fill="#70f0a6"/>
                     </svg>
-                    <svg class="ico wifi" viewBox="0 0 24 24">
+                    <!-- WiFi -->
+                    <svg class="ico wifi" viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M12 20.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm-4-4.4a7.5 7.5 0 018 0l-1.2 1.6a5.5 5.5 0 00-5.6 0L8 16.1zM4 12a11.5 11.5 0 0116 0l-1.2 1.6a9.5 9.5 0 00-13.6 0L4 12z" fill="#ffd86a"/>
                     </svg>
-                    <svg class="ico batt" viewBox="0 0 28 14">
+                    <!-- Pin -->
+                    <svg class="ico batt" viewBox="0 0 28 14" aria-hidden="true">
                       <rect x="1" y="3" width="22" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.5"/>
                       <rect x="2.5" y="4.5" width="17" height="5" rx="1" fill="#70f0a6"/>
                       <rect x="23.5" y="5" width="2.5" height="4" rx="1" fill="#fff"/>
                     </svg>
                   </div>
                   <div class="datetime">
-                    <span id="vnClockBig" class="grad-text">--:--:--</span>
-                    <span id="vnDate" class="grad-text-sm">--/--/----</span>
+                    <span id="vnClockBig" class="theme-text">--:--:--</span>
+                    <span id="vnDate" class="theme-text">--/--/----</span>
                   </div>
                 </div>
+
+                <!-- Chips trong Island: sẽ bọc text để nhận gradient -->
                 <div class="island-chips">
                   <span class="mini-chip chip1">🎮 Chơi game</span>
-                  <span class="mini-chip chip2">🔮 Lọ</span>
+                  <span class="mini-chip chip2">🔮 Lọc</span>
                   <span class="mini-chip chip3">🎵 Nhạc</span>
                 </div>
               </div>
             </div>
 
+            <!-- Màn hình giả lập Facebook -->
             <div class="iphone__screen fb">
               <div class="fb-header">
                 <div class="logo-badge">f</div>
                 <div class="fb-actions">
-                  <button>🔍</button>
-                  <button>💬</button>
+                  <button aria-label="Tìm kiếm">🔍</button>
+                  <button aria-label="Tin nhắn">💬</button>
                 </div>
               </div>
 
@@ -100,7 +130,7 @@
                 <div class="post-head">
                   <img id="postAvatar" class="avatar-sm" alt="">
                   <div>
-                    <div class="name" id="postName"></div>
+                    <div class="name theme-text" id="postName"></div>
                     <div class="time">Vừa xong · 🌐</div>
                   </div>
                 </div>
@@ -108,7 +138,8 @@
                 <div class="post-media"></div>
               </div>
 
-              <input id="sliderBar" class="sliderbar" type="range" min="0" max="100" value="50">
+              <!-- Thanh slidebar -->
+              <input id="sliderBar" class="sliderbar" type="range" min="0" max="100" value="50" aria-label="Thanh trượt">
             </div>
           </div>
         </div>
@@ -119,4 +150,5 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
