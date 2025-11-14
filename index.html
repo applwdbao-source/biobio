@@ -3,270 +3,125 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Applw</title>
+<title>ApplwNgoo</title>
 <style>
-/* ====== Theme nền tối ====== */
-body{margin:0;background:#02040a;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;text-align:center;overflow-x:hidden;}
-.card{margin:20px auto;padding:16px;width:min(92%,820px);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;backdrop-filter:blur(10px);}
-
-/* ====== Nút & input ====== */
-.btn{background:#141826;border:none;border-radius:10px;color:#fff;padding:10px 14px;margin:6px;cursor:pointer;font-weight:600;box-shadow:0 6px 16px rgba(0,0,0,.35);}
-.btn:hover{background:#23283d}
-input[type=file]{display:none}
-
-/* ====== Tick xanh (verified badge) ====== */
 :root{
-  --verify-a:#1fa2ff;
-  --verify-mid:#12d8fa;
-  --verify-b:#1d8cf8;
+  --grad1:#ff62a5;--grad2:#57ff9a;
+  --tick1:#1fa2ff;--tick2:#12d8fa;--tick3:#1d8cf8;
+  --wave1:#57ff9a;--wave2:#ff4fa8;
 }
-.v-badge{
-  display:inline-grid;place-items:center;
-  width:18px;height:18px;margin-left:6px;border-radius:50%;
-  background:linear-gradient(135deg,var(--verify-a),var(--verify-mid) 50%,var(--verify-b));
-  color:#fff; /* check mark dùng currentColor */
-  box-shadow:0 0 0 2px rgba(255,255,255,.25);
-}
-.v-badge--lg{width:22px;height:22px;margin-left:8px}
-.v-badge svg{width:60%;height:60%}
-@keyframes tickGlow{
-  0%{filter:hue-rotate(0);box-shadow:0 0 8px #1fa2ff}
-  50%{filter:hue-rotate(180deg);box-shadow:0 0 16px #12d8fa}
-  100%{filter:hue-rotate(360deg);box-shadow:0 0 8px #1fa2ff}
-}
-.v-badge--flash{animation:tickGlow 2.5s linear infinite}
-@media (prefers-reduced-motion:reduce){.v-badge--flash{animation:none}}
-
-/* ====== iPhone khung & màn hình ====== */
-.iphone{
-  position:relative;width:min(360px,92vw);aspect-ratio:9/19.5;
-  border-radius:45px;background:#000;box-shadow:0 20px 60px rgba(0,0,0,.9);overflow:hidden;margin:18px auto;
-}
-.iphone__screen{position:absolute;inset:10px;border-radius:35px;background:#111;display:flex;flex-direction:column;overflow:hidden}
-
-/* ====== Dynamic Island + Soundwave ====== */
-.island{
-  position:absolute;top:12px;left:50%;transform:translateX(-50%);
-  width:160px;height:36px;background:#000;border-radius:18px;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .35s ease;overflow:hidden;z-index:2;
-}
-.island.expanded{width:88%;height:130px;border-radius:30px;background:#0c0c0c;flex-direction:column;padding:10px}
-.island-expanded{display:none}
-.island.expanded .island-expanded{display:block}
-.island.expanded .island-compact{display:none}
-.grad{background:linear-gradient(90deg,#ff4fa8,#57ff9a);-webkit-background-clip:text;color:transparent}
-
-/* Visualizer bars */
-.visualizer{width:92%;height:34px;margin:8px auto 0;display:flex;align-items:flex-end;gap:3px}
-.visualizer div{
-  flex:1; height:8px; border-radius:2px;
-  background:linear-gradient(180deg,#57ff9a,#ff4fa8);
-  transition:height .05s linear, background .4s ease;
-}
-
-/* ====== Facebook mock ====== */
-.fb-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#0e0e0e;border-bottom:1px solid #222}
-.logo-badge{background:#1877f2;color:#fff;font-weight:900;font-size:20px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.fb-composer{display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #222;background:#0b0b0b}
-.avatar-sm{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#1c1c1c}
-.fake-input{flex:1;color:#cfd6ff}
-.fb-post{padding:10px;text-align:left;border-bottom:1px solid #222;background:#0c0c0c}
-.post-head{display:flex;align-items:center;gap:8px}
-.name{font-weight:800}
-.time{font-size:12px;opacity:.8}
-.post-media{border-radius:12px;background:#000;overflow:hidden;margin-top:10px}
-.video-wrap{position:relative;width:100%}
-.video-wrap::before{content:"";display:block;padding-top:56.25%}
-.video-wrap video,.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000}
-.placeholder{display:grid;place-items:center;color:#8c8c8c;padding:24px}
+body{margin:0;background:#02040a;color:#fff;font-family:'Be Vietnam Pro',sans-serif;text-align:center;overflow-x:hidden;}
+.card{margin:20px auto;padding:15px;width:min(90%,800px);background:rgba(255,255,255,.06);border-radius:20px;backdrop-filter:blur(8px);}
+.btn{background:#141826;border:none;border-radius:10px;color:#fff;padding:10px 16px;margin:5px;cursor:pointer;font-weight:600;}
+.btn:hover{background:#23283d;}
+.theme-text{background:linear-gradient(90deg,var(--grad1),var(--grad2));-webkit-background-clip:text;color:transparent;}
+.rainbow-text{background:linear-gradient(90deg,#ff4fa8,#ffd66e,#57ff9a,#57d0ff,#aa7bff,#ff4fa8);background-size:400% 100%;animation:rainbow 4s linear infinite;-webkit-background-clip:text;color:transparent;}
+.rgb-text{background:linear-gradient(90deg,#ff0000,#00ff00,#0000ff,#ff0000);background-size:400% 100%;animation:rgbShift 3s linear infinite;-webkit-background-clip:text;color:transparent;}
+@keyframes rainbow{0%{background-position:0 50%}100%{background-position:100% 50%}}
+@keyframes rgbShift{0%{background-position:0 50%}100%{background-position:100% 50%}}
+.v-badge{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:6px;border-radius:50%;background:linear-gradient(135deg,var(--tick1),var(--tick2) 50%,var(--tick3));box-shadow:0 0 8px #1fa2ff;}
+.v-badge svg{width:60%;height:60%;color:#fff;}
+.iphone{position:relative;width:min(360px,92vw);aspect-ratio:9/19.5;border-radius:45px;background:#000;box-shadow:0 20px 60px rgba(0,0,0,.9);overflow:hidden;margin:18px auto;}
+.iphone__screen{position:absolute;inset:10px;border-radius:35px;background:#111;display:flex;flex-direction:column;overflow:hidden;}
+.island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:160px;height:36px;background:#000;border-radius:18px;display:flex;align-items:center;justify-content:center;transition:all .35s ease;overflow:hidden;z-index:2;}
+.island.expanded{width:88%;height:130px;border-radius:30px;background:#0c0c0c;flex-direction:column;padding:10px;}
+.island-expanded{display:none;}
+.island.expanded .island-expanded{display:block;}
+.island.expanded .island-compact{display:none;}
+.grad{background:linear-gradient(90deg,var(--grad1),var(--grad2));-webkit-background-clip:text;color:transparent;}
+.di-wave{width:92%;height:34px;margin:8px auto 0;display:flex;align-items:flex-end;gap:3px;}
+.di-wave .bar{flex:1;height:8px;border-radius:2px;background:linear-gradient(180deg,var(--wave1),var(--wave2));transition:height .05s linear,background .4s;}
+.fb-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#0e0e0e;border-bottom:1px solid #222;}
+.logo-badge{background:#1877f2;color:#fff;font-weight:900;font-size:20px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.fb-composer{display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #222;background:#0b0b0b;}
+.avatar-sm{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#1c1c1c;}
+.fb-post{padding:10px;text-align:left;border-bottom:1px solid #222;background:#0c0c0c;}
+.post-head{display:flex;align-items:center;gap:8px;}
+.post-media{border-radius:12px;background:#000;overflow:hidden;margin-top:8px;}
+.video-wrap{position:relative;width:100%;}
+.video-wrap::before{content:"";display:block;padding-top:56.25%;}
+.video-wrap video,.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000;}
+.placeholder{display:grid;place-items:center;color:#888;padding:24px;}
 </style>
 </head>
 <body>
-  <div class="card">
-    <h1>ApplwNgoo</h1>
-    <p>Giờ Việt Nam trên Dynamic Island · Video MP4 phát trong bài đăng · Soundwave theo âm thanh video.</p>
-    <div>
-      <label class="btn" for="videoInput">Chọn video MP4</label>
-      <input id="videoInput" type="file" accept="video/mp4,video/*">
-      <label class="btn" for="avatarInput">Đổi avatar</label>
-      <input id="avatarInput" type="file" accept="image/*">
-      <button class="btn" id="expandIsland">Mở/thu Dynamic Island</button>
-    </div>
-  </div>
+<div class="card">
+  <h1 class="theme-text">ApplwNgoo</h1>
+  <div>
+    <label class="btn" for="videoInput">Chọn MP4</label><input id="videoInput" type="file" accept="video/mp4,video/*">
+    <input id="ytInput" placeholder="Link YouTube/Spotify" style="padding:10px;width:220px;border-radius:8px;border:none;">
+    <button class="btn" id="btnYT">Phát link</button>
+    <label class="btn" for="avatarInput">Đổi avatar</label><input id="avatarInput" type="file" accept="image/*">
+    <button class="btn" id="expandIsland">Mở/thu Island</button>
+    <button class="btn" id="btnRainbow">Cầu vồng</button>
+    <button class="btn" id="btnRGB">RGB</button>
+    <button class="btn" id="btnTheme">Theme mặc định</button>
+  </div>
+</div>
 
-  <!-- iPhone -->
-  <div class="iphone">
-    <!-- Dynamic Island -->
-    <div class="island" id="island" title="Chạm để mở/thu gọn">
-      <div class="island-compact">
-        <span id="vnClock" class="grad">--:--:--</span>
-      </div>
-      <div class="island-expanded">
-        <div class="grad" id="vnClockBig" style="font-weight:700">--:--:--</div>
-        <div class="grad" id="vnDate" style="opacity:.9">--/--/----</div>
-        <div id="visualizer" class="visualizer" aria-hidden="true"></div>
-      </div>
-    </div>
+<div class="iphone">
+  <div class="island" id="island">
+    <div class="island-compact"><span id="vnClock" class="grad">--:--:--</span></div>
+    <div class="island-expanded">
+      <div class="grad" id="vnClockBig">--:--:--</div>
+      <div class="grad" id="vnDate">--/--/----</div>
+      <div id="diWave" class="di-wave"></div>
+    </div>
+  </div>
 
-    <!-- Màn hình Facebook -->
-    <div class="iphone__screen">
-      <div class="fb-header">
-        <div class="logo-badge">f</div>
-        <div style="opacity:.6">Facebook</div>
-      </div>
-
-      <div class="fb-composer">
-        <img id="composerAvatar" class="avatar-sm" alt="">
-        <div class="fake-input">Bạn đang nghĩ gì?</div>
-      </div>
-
-      <div class="fb-post">
-        <div class="post-head">
-          <img id="postAvatar" class="avatar-sm" alt="">
-          <div>
-            <div class="name">
-             ApplwNgoo
-              <!-- Tick xanh gắn sau tên -->
-              <span class="v-badge v-badge--lg v-badge--flash" title="Đã xác minh" aria-label="Đã xác minh">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 12l3.5 3.5L18 7"
-                        fill="none" stroke="currentColor"
-                        stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-            </div>
-            <div class="time" id="postTime">Vừa xong · 🌐</div>
-          </div>
-        </div>
-
-        <div class="post-media" id="postMedia">
-          <div id="placeholder" class="placeholder">Chưa có video — hãy bấm <b>Chọn video MP4</b>.</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="iphone__screen">
+    <div class="fb-header"><div class="logo-badge">f</div></div>
+    <div class="fb-composer"><img id="composerAvatar" class="avatar-sm"><div class="theme-text">Bạn đang nghĩ gì?</div></div>
+    <div class="fb-post">
+      <div class="post-head">
+        <img id="postAvatar" class="avatar-sm">
+        <div><div id="fbName" class="theme-text name">ApplwNgoo
+          <span class="v-badge v-badge--lg v-badge--flash"><svg viewBox="0 0 24 24"><path d="M6 12l3.5 3.5L18 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div><div class="theme-text time" id="postTime">Vừa xong · 🌐</div></div>
+      </div>
+      <div class="post-media" id="postMedia"><div class="placeholder">Chưa có video hoặc link.</div></div>
+    </div>
+  </div>
+</div>
 
 <script>
-/* ===== VN time (Asia/Ho_Chi_Minh) ===== */
-function vnNow(){
-  try{
-    return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Ho_Chi_Minh"}));
-  }catch{
-    const n=new Date(); return new Date(n.getTime()+n.getTimezoneOffset()*60000+7*3600000);
-  }
-}
-const two = n => String(n).padStart(2,"0");
-function updateVN(){
-  const t=vnNow(); const hh=two(t.getHours()), mm=two(t.getMinutes()), ss=two(t.getSeconds());
-  const d=two(t.getDate()), mo=two(t.getMonth()+1), y=t.getFullYear();
-  vnClock.textContent = `${hh}:${mm}:${ss}`;
-  vnClockBig.textContent = `${hh}:${mm}:${ss}`;
-  vnDate.textContent = `${d}/${mo}/${y}`;
-  postTime.textContent = `Vừa xong · 🌐 · ${d}/${mo}/${y} ${hh}:${mm}`;
-}
-setInterval(updateVN,1000); updateVN();
+/* === Giờ VN === */
+function vnNow(){try{return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Ho_Chi_Minh"}))}catch{const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+7*3600000)}}
+const pad=n=>String(n).padStart(2,"0");
+function updateVN(){const d=vnNow();vnClock.textContent=pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds());vnClockBig.textContent=vnClock.textContent;vnDate.textContent=pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear();postTime.textContent="Vừa xong · 🌐 "+vnDate.textContent+" "+pad(d.getHours())+":"+pad(d.getMinutes());}
+setInterval(updateVN,1000);updateVN();
+island.onclick=()=>island.classList.toggle("expanded");
+expandIsland.onclick=()=>island.classList.toggle("expanded");
 
-/* ===== Dynamic Island toggle ===== */
-const island = document.getElementById("island");
-island.addEventListener("click", ()=> island.classList.toggle("expanded"));
-document.getElementById("expandIsland").addEventListener("click", ()=> island.classList.toggle("expanded"));
+/* === Avatar mặc định và đổi === */
+function avatarSvg(txt){return"data:image/svg+xml;utf8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='${getComputedStyle(document.documentElement).getPropertyValue("--grad1")}'/><stop offset='100%' stop-color='${getComputedStyle(document.documentElement).getPropertyValue("--grad2")}'/></linearGradient></defs><rect width='100%' height='100%' fill='url(#g)'/><text x='50%' y='58%' text-anchor='middle' font-size='110' font-family='Arial' fill='white' font-weight='700'>${txt}</text></svg>`);}
+composerAvatar.src=postAvatar.src=avatarSvg("BPN");
+avatarInput.onchange=e=>{const f=e.target.files[0];if(!f)return;const u=URL.createObjectURL(f);composerAvatar.src=postAvatar.src=u;};
 
-/* ===== Avatar mặc định + đổi avatar ===== */
-function defaultAvatar(initials="BPN"){
-  const svg=`<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'>
-    <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-      <stop offset='0%' stop-color='#ff62a5'/><stop offset='100%' stop-color='#57ff9a'/>
-    </linearGradient></defs>
-    <rect width='100%' height='100%' fill='url(#g)'/>
-    <text x='50%' y='58%' text-anchor='middle' font-size='110' font-family='Arial' fill='white' font-weight='700'>${initials}</text>
-  </svg>`;
-  return "data:image/svg+xml;utf8,"+encodeURIComponent(svg);
-}
-composerAvatar.src = postAvatar.src = defaultAvatar();
-document.getElementById("avatarInput").addEventListener("change",e=>{
-  const f=e.target.files?.[0]; if(!f) return;
-  const url=URL.createObjectURL(f);
-  composerAvatar.src = postAvatar.src = url;
-});
+/* === Video / YouTube === */
+const mediaBox=document.getElementById("postMedia");
+videoInput.onchange=e=>{const f=e.target.files[0];if(!f)return;showVideo(URL.createObjectURL(f));};
+btnYT.onclick=()=>{const l=ytInput.value.trim();if(!l)return;showYT(l);};
+function clear(){mediaBox.innerHTML="";}
+function showVideo(u){clear();const wrap=document.createElement("div");wrap.className="video-wrap";const v=document.createElement("video");v.src=u;v.controls=v.autoplay=v.loop=v.playsInline=true;wrap.appendChild(v);mediaBox.appendChild(wrap);startWave(v);}
+function ytID(u){if(u.includes("youtu.be/"))return u.split("youtu.be/")[1].split(/[?&]/)[0];const v=(u.match(/[?&]v=([^&]+)/)||[])[1];if(v)return v;const s=(u.match(/\/shorts\/([^?]+)/)||[])[1];if(s)return s;return null;}
+function showYT(u){clear();const id=ytID(u);const ifr=document.createElement("iframe");ifr.className="yt";ifr.src=`https://www.youtube.com/embed/${id}?autoplay=1&mute=1`;ifr.allow="autoplay";ifr.allowFullscreen=true;const wrap=document.createElement("div");wrap.className="video-wrap";wrap.appendChild(ifr);mediaBox.appendChild(wrap);fakeWave();}
 
-/* ===== Video vào bài post + Visualizer trong Dynamic Island ===== */
-const postMedia = document.getElementById("postMedia");
-const videoInput = document.getElementById("videoInput");
-let audioCtx=null, analyser=null, srcNode=null, rafId=null;
+/* === Soundwave – thật hoặc giả lập === */
+const wave=document.getElementById("diWave");
+function bars(n=24){wave.innerHTML="";for(let i=0;i<n;i++){const b=document.createElement("div");b.className="bar";wave.appendChild(b);}}
+bars();
+function startWave(media){const barsEls=wave.children;const ctx=new (window.AudioContext||window.webkitAudioContext)();const src=ctx.createMediaElementSource(media);const an=ctx.createAnalyser();an.fftSize=64;src.connect(an);an.connect(ctx.destination);const buf=new Uint8Array(an.frequencyBinCount);function loop(){requestAnimationFrame(loop);an.getByteFrequencyData(buf);for(let i=0;i<barsEls.length;i++){const h=Math.max(4,buf[i]/3);barsEls[i].style.height=h+"px";const t=getComputedStyle(document.documentElement).getPropertyValue("--wave1"),b=getComputedStyle(document.documentElement).getPropertyValue("--wave2");barsEls[i].style.background=`linear-gradient(180deg,${t},${b})`;}}loop();}
+function fakeWave(){bars();const b=[...wave.children];b.forEach((el,i)=>{el.animate([{transform:"scaleY(0.6)"},{transform:"scaleY(1)"},{transform:"scaleY(0.6)"}],{duration:800,iterations:Infinity,delay:i*30});});}
 
-videoInput.addEventListener("change", e=>{
-  const f=e.target.files?.[0]; if(!f) return;
-  const url=URL.createObjectURL(f);
-  showVideo(url);
-});
-
-function clearMedia(){
-  postMedia.innerHTML="";
-  if(rafId) cancelAnimationFrame(rafId);
-  rafId=null;
-  try{ if(audioCtx) audioCtx.close(); }catch{}
-  audioCtx=analyser=srcNode=null;
-}
-
-function showVideo(url){
-  clearMedia();
-  const wrap=document.createElement("div");
-  wrap.className="video-wrap";
-  const v=document.createElement("video");
-  v.src=url; v.controls=true; v.autoplay=true; v.loop=true; v.playsInline=true;
-  wrap.appendChild(v); postMedia.appendChild(wrap);
-  v.addEventListener("loadeddata", ()=>{ v.play().catch(()=>{}); startVisualizer(v); }, {once:true});
-}
-
-/* ===== Soundwave: tạo 24 cột trong Island ===== */
-function ensureBars(){
-  const vsl=document.getElementById("visualizer");
-  if(vsl.children.length) return [...vsl.children];
-  const frag=document.createDocumentFragment();
-  for(let i=0;i<24;i++){ const bar=document.createElement("div"); frag.appendChild(bar); }
-  vsl.appendChild(frag);
-  return [...vsl.children];
-}
-
-function startVisualizer(mediaEl){
-  const bars = ensureBars();
-
-  // Khởi Web Audio
-  audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-  srcNode = audioCtx.createMediaElementSource(mediaEl);
-  analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 64;              // ít cột -> mượt
-  analyser.smoothingTimeConstant = .85;
-
-  srcNode.connect(analyser);
-  // Không bắt buộc nối ra loa, vì <video> tự phát — chỉ phân tích dữ liệu
-  // analyser.connect(audioCtx.destination); // nếu muốn “bảo đảm” phát qua AudioContext
-
-  const buf = new Uint8Array(analyser.frequencyBinCount);
-
-  const loop = () => {
-    rafId = requestAnimationFrame(loop);
-    analyser.getByteFrequencyData(buf);
-
-    for(let i=0;i<bars.length;i++){
-      // Lấy năng lượng dải tần, scale chiều cao
-      const h = Math.max(4, buf[i] / 3);
-      bars[i].style.height = `${h}px`;
-
-      // Màu bar: đồng bộ tick xanh nhưng hơi đổi tông theo index
-      const hueShift = (i*8 + performance.now()/20) % 360;
-      // Lấy màu nền tick từ biến, nhưng thêm hue shift nhẹ
-      bars[i].style.background = `linear-gradient(180deg, hsl(${(120+hueShift)%360} 90% 60%), hsl(${(320+hueShift)%360} 90% 60%))`;
-    }
-  };
-  loop();
-}
-
-/* ===== Trợ năng: nếu không có video, vẫn cho đảo nở/thu ===== */
-// (Đã có mặc định ở toggle phía trên)
+/* === Đổi theme đồng bộ (Tick + Sóng + Chữ) === */
+const textEls=()=>document.querySelectorAll(".theme-text,.grad,.time,.fake-input,.name,h1");
+function applyText(cls){textEls().forEach(e=>{e.classList.remove("rainbow-text","rgb-text","theme-text");e.classList.add(cls);});}
+function setVars(a,b,c,d,e){document.documentElement.style.setProperty("--grad1",a);document.documentElement.style.setProperty("--grad2",b);document.documentElement.style.setProperty("--tick1",c);document.documentElement.style.setProperty("--tick2",d);document.documentElement.style.setProperty("--tick3",e);document.documentElement.style.setProperty("--wave1",b);document.documentElement.style.setProperty("--wave2",a);}
+btnRainbow.onclick=()=>{applyText("rainbow-text");setVars("#ff4fa8","#57ff9a","#ff4fa8","#ffd66e","#57ff9a");};
+btnRGB.onclick=()=>{applyText("rgb-text");setVars("#ff0000","#00ff00","#ff0000","#00ff00","#0000ff");};
+btnTheme.onclick=()=>{applyText("theme-text");setVars("#ff62a5","#57ff9a","#1fa2ff","#12d8fa","#1d8cf8");};
 </script>
 </body>
 </html>
-
 
