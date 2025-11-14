@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ApplwIphone??</title>
+  <title>ApplwNgoo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -17,21 +18,21 @@
 
   <main class="container">
     <section class="card">
-      <h1 class="display" id="heroName">ApplwNgoo</h1>
+      <h1 class="display gradient-text" id="heroName"></h1>
       <p class="lead">Xin chào — mình là <strong>ApplwNgoo</strong>.</p>
       <p class="sublead">Sinh năm <strong>2008</strong></p>
 
       <nav class="tagline">
-        <a class="chip rainbow">Tán Gái</a>
-        <a class="chip blue">Lọ</a>
-        <a class="chip lime">Chơi Game</a>
-        <a class="chip purple">Nghe Nhạc</a>
+        <a class="chip rainbow">Chịu</a>
+        <a class="chip blue">Chơi Game</a>
+        <a class="chip lime">Nghe Nhạc</a>
+        <a class="chip purple">Lọ</a>
       </nav>
 
       <div class="controls">
         <button class="btn" id="btnPink">Màu hồng</button>
-        <button class="btn" id="btnFlash">Màu nhấp nháy</button>
-        <button class="btn" id="btnRandom">Random màu</button>
+        <button class="btn" id="btnFlash">Nhấp nháy</button>
+        <button class="btn" id="btnRandom">Random</button>
         <div class="picker">
           <button class="btn" id="btnPick">Chọn màu</button>
           <input id="colorInput" type="color" value="#ff62a5" />
@@ -40,7 +41,6 @@
 
       <hr class="sep" />
 
-      <!-- Khu vực ảnh đại diện và khung iPhone -->
       <section class="phone-demo">
         <div class="uploader">
           <img id="avatarPreview" class="avatar-lg" alt="Ảnh đại diện" />
@@ -50,9 +50,38 @@
 
         <div class="iphone">
           <div class="iphone__bezel">
-            <div class="island">
-              <span id="vnClock">--:--:--</span>
+            <div class="island" id="island">
+              <div class="island-compact">
+                <span id="vnClock" class="grad-text">--:--:--</span>
+              </div>
+              <div class="island-expanded">
+                <div class="status-line">
+                  <div class="status-icons">
+                    <svg class="ico sig" viewBox="0 0 24 24">
+                      <path d="M3 18h2v3H3zm4-4h2v7H7zm4-3h2v10h-2zm4-3h2v13h-2zm4-5h2v18h-2z" fill="#70f0a6"/>
+                    </svg>
+                    <svg class="ico wifi" viewBox="0 0 24 24">
+                      <path d="M12 20.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm-4-4.4a7.5 7.5 0 018 0l-1.2 1.6a5.5 5.5 0 00-5.6 0L8 16.1zM4 12a11.5 11.5 0 0116 0l-1.2 1.6a9.5 9.5 0 00-13.6 0L4 12z" fill="#ffd86a"/>
+                    </svg>
+                    <svg class="ico batt" viewBox="0 0 28 14">
+                      <rect x="1" y="3" width="22" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.5"/>
+                      <rect x="2.5" y="4.5" width="17" height="5" rx="1" fill="#70f0a6"/>
+                      <rect x="23.5" y="5" width="2.5" height="4" rx="1" fill="#fff"/>
+                    </svg>
+                  </div>
+                  <div class="datetime">
+                    <span id="vnClockBig" class="grad-text">--:--:--</span>
+                    <span id="vnDate" class="grad-text-sm">--/--/----</span>
+                  </div>
+                </div>
+                <div class="island-chips">
+                  <span class="mini-chip chip1">🎮 Chơi game</span>
+                  <span class="mini-chip chip2">🔮 Lọ</span>
+                  <span class="mini-chip chip3">🎵 Nhạc</span>
+                </div>
+              </div>
             </div>
+
             <div class="iphone__screen fb">
               <div class="fb-header">
                 <div class="logo-badge">f</div>
@@ -71,26 +100,15 @@
                 <div class="post-head">
                   <img id="postAvatar" class="avatar-sm" alt="">
                   <div>
-                    <div class="name">Trần Duy Bảo</div>
+                    <div class="name" id="postName"></div>
                     <div class="time">Vừa xong · 🌐</div>
                   </div>
                 </div>
-                <div class="post-text">Xin chào! Đây là giao diện Facebook trong khung iPhone 14 Pro Max.</div>
+                <div class="post-text">Xin chào! Đây là giao diện Facebook trong iPhone 14 Pro Max 😍</div>
                 <div class="post-media"></div>
-                <div class="post-actions">
-                  <button>👍 Thích</button>
-                  <button>💬 Bình luận</button>
-                  <button>↗ Chia sẻ</button>
-                </div>
               </div>
 
-              <nav class="fb-tabbar">
-                <button>🏠</button>
-                <button>▶</button>
-                <button>🛍</button>
-                <button>🔔</button>
-                <button>☰</button>
-              </nav>
+              <input id="sliderBar" class="sliderbar" type="range" min="0" max="100" value="50">
             </div>
           </div>
         </div>
@@ -101,3 +119,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
