@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ApplwIphone??</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="clockbar">
+    <div class="clockbar__line"><span id="clockText"></span></div>
+    <div class="clockbar__greet">
+      <span id="greetEmoji">🌙</span>
+      <span id="greetText">Chúc buổi tối tuyệt vời!</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h1 class="display" id="heroName">ApplwNgoo</h1>
+      <p class="lead">Xin chào — mình là <strong>ApplwNgoo</strong>.</p>
+      <p class="sublead">Sinh năm <strong>2008</strong></p>
+
+      <nav class="tagline">
+        <a class="chip rainbow">Tán Gái</a>
+        <a class="chip blue">Lọ</a>
+        <a class="chip lime">Chơi Game</a>
+        <a class="chip purple">Nghe Nhạc</a>
+      </nav>
+
+      <div class="controls">
+        <button class="btn" id="btnPink">Màu hồng</button>
+        <button class="btn" id="btnFlash">Màu nhấp nháy</button>
+        <button class="btn" id="btnRandom">Random màu</button>
+        <div class="picker">
+          <button class="btn" id="btnPick">Chọn màu</button>
+          <input id="colorInput" type="color" value="#ff62a5" />
+        </div>
+      </div>
+
+      <hr class="sep" />
+
+      <!-- Khu vực ảnh đại diện và khung iPhone -->
+      <section class="phone-demo">
+        <div class="uploader">
+          <img id="avatarPreview" class="avatar-lg" alt="Ảnh đại diện" />
+          <label class="btn" for="avatarInput">Chọn ảnh đại diện</label>
+          <input id="avatarInput" type="file" accept="image/*" hidden>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone__bezel">
+            <div class="island">
+              <span id="vnClock">--:--:--</span>
+            </div>
+            <div class="iphone__screen fb">
+              <div class="fb-header">
+                <div class="logo-badge">f</div>
+                <div class="fb-actions">
+                  <button>🔍</button>
+                  <button>💬</button>
+                </div>
+              </div>
+
+              <div class="fb-composer">
+                <img id="composerAvatar" class="avatar-sm" alt="">
+                <div class="fake-input">Bạn đang nghĩ gì?</div>
+              </div>
+
+              <div class="fb-post">
+                <div class="post-head">
+                  <img id="postAvatar" class="avatar-sm" alt="">
+                  <div>
+                    <div class="name">Trần Duy Bảo</div>
+                    <div class="time">Vừa xong · 🌐</div>
+                  </div>
+                </div>
+                <div class="post-text">Xin chào! Đây là giao diện Facebook trong khung iPhone 14 Pro Max.</div>
+                <div class="post-media"></div>
+                <div class="post-actions">
+                  <button>👍 Thích</button>
+                  <button>💬 Bình luận</button>
+                  <button>↗ Chia sẻ</button>
+                </div>
+              </div>
+
+              <nav class="fb-tabbar">
+                <button>🏠</button>
+                <button>▶</button>
+                <button>🛍</button>
+                <button>🔔</button>
+                <button>☰</button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
