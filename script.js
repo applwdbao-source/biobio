@@ -1,13 +1,11 @@
-const FULL_NAME = "Bách Phạm Ngọc";
+const FULL_NAME = "ApplwNgoo";
 const BIRTH_YEAR = 2008;
 
-function two(n){ return String(n).padStart(2,'0'); }
-
-/* ----- Đồng hồ & chào theo giờ ----- */
+/* === Header Clock & Greeting === */
 function tick() {
   const now = new Date();
   document.getElementById("clockText").textContent =
-    now.toLocaleString('vi-VN');
+    now.toLocaleString("vi-VN");
   const h = now.getHours();
   let emoji="🌙", greet="Chúc buổi tối tuyệt vời!";
   if(h<11 && h>=5) {emoji="🌞"; greet="Chúc buổi sáng vui vẻ!";}
@@ -18,61 +16,34 @@ function tick() {
 }
 setInterval(tick,1000); tick();
 
-/* ----- Gradient đổi màu ----- */
-function setGradient(a,b){
-  document.documentElement.style.setProperty("--grad-from",a);
-  document.documentElement.style.setProperty("--grad-to",b);
+/* === Dynamic Island clock VN === */
+function vnNow(){
+  return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Ho_Chi_Minh"}));
 }
+function updateVNClock(){
+  const n=vnNow();
+  const hh=String(n.getHours()).padStart(2,"0");
+  const mm=String(n.getMinutes()).padStart(2,"0");
+  const ss=String(n.getSeconds()).padStart(2,"0");
+  const d=String(n.getDate()).padStart(2,"0");
+  const m=String(n.getMonth()+1).padStart(2,"0");
+  const y=n.getFullYear();
+  document.getElementById("vnClock").textContent=`${hh}:${mm}:${ss}`;
+  document.getElementById("vnClockBig").textContent=`${hh}:${mm}:${ss}`;
+  document.getElementById("vnDate").textContent=`${d}/${m}/${y}`;
+}
+setInterval(updateVNClock,1000); updateVNClock();
+
+/* === Dynamic Island Animation === */
+const island=document.getElementById("island");
+island.addEventListener("click",()=>island.classList.toggle("expanded"));
+
+/* === Gradient color changer === */
 function randomGradient(){
   const h1=Math.random()*360,h2=(h1+90)%360;
   return [`hsl(${h1} 90% 60%)`,`hsl(${h2} 80% 60%)`];
 }
-document.getElementById("btnPink").onclick=()=>{setGradient("#ff62a5","#ffb3d1");document.querySelector(".display").classList.remove("flash");};
-document.getElementById("btnFlash").onclick=()=>{document.querySelector(".display").classList.toggle("flash");};
-document.getElementById("btnRandom").onclick=()=>{const [a,b]=randomGradient();setGradient(a,b);document.querySelector(".display").classList.remove("flash");};
-document.getElementById("btnPick").onclick=()=>colorInput.click();
-colorInput.oninput=e=>{setGradient(e.target.value,"#fff");};
-
-/* ----- Dynamic Island: giờ Việt Nam ----- */
-function vnNow(){
-  try {
-    return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Ho_Chi_Minh"}));
-  } catch {
-    const now=new Date();
-    const utc=now.getTime()+now.getTimezoneOffset()*60000;
-    return new Date(utc+7*3600000);
-  }
+function setGradient(a,b){
+  document.documentElement.style.setProperty("--grad-from",a);
+  document.documentElement.style.setProperty("--grad-to",b);
 }
-function updateVNClock(){
-  const n=vnNow();
-  document.getElementById("vnClock").textContent=`${two(n.getHours())}:${two(n.getMinutes())}:${two(n.getSeconds())}`;
-}
-setInterval(updateVNClock,1000); updateVNClock();
-
-/* ----- Ảnh đại diện ----- */
-function getInitials(name){return name.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();}
-function makeAvatar(initials){
-  const svg=`<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'>
-    <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-      <stop offset='0%' stop-color='#ff62a5'/><stop offset='100%' stop-color='#70f0a6'/>
-    </linearGradient></defs>
-    <rect width='100%' height='100%' fill='url(#g)'/>
-    <text x='50%' y='58%' text-anchor='middle' font-size='110' font-family='Arial' fill='white' font-weight='700'>${initials}</text>
-  </svg>`;
-  return "data:image/svg+xml;utf8,"+encodeURIComponent(svg);
-}
-const defaultAvatar=makeAvatar(getInitials(FULL_NAME));
-const avatarPreview=document.getElementById("avatarPreview");
-const composerAvatar=document.getElementById("composerAvatar");
-const postAvatar=document.getElementById("postAvatar");
-avatarPreview.src=composerAvatar.src=postAvatar.src=defaultAvatar;
-
-document.getElementById("avatarInput").addEventListener("change",e=>{
-  const file=e.target.files?.[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    avatarPreview.src=composerAvatar.src=postAvatar.src=ev.target.result;
-  };
-  reader.readAsDataURL(file);
-});
