@@ -1,4 +1,384 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trần Duy Bảo's Dynamic FB</title>
+    
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --bg-color: #f0f2f5;
+            --text-color: #050505;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --border-color: #ddd;
+            --fb-blue: #1877f2;
+            --input-bg: #e4e6eb;
+            --input-border: #ddd;
+            --action-btn-bg: #e4e6eb;
+            --action-btn-text: #000;
+        }
+
+        .night-mode {
+            --bg-color: #1a1a1a; /* Dark background */
+            --text-color: #e4e6eb; /* Light text */
+            --card-bg: #242526; /* Darker card background */
+            --header-bg: #242526; /* Darker header */
+            --border-color: #3e4042; /* Darker borders */
+            --fb-blue: #2d88ff; /* Slightly different blue for dark mode */
+            --input-bg: #3a3b3c; /* Dark input background */
+            --input-border: #3a3b3c; /* Dark input border */
+            --action-btn-bg: #3a3b3c;
+            --action-btn-text: #e4e6eb;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-color); 
+            margin: 0;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s ease; /* Smooth transition for theme change */
+        }
+
+        /* 1. The Phone's Outer Body */
+        .iphone-container {
+            position: relative;
+        }
+
+        .iphone-frame {
+            width: 390px;
+            height: 800px;
+            background: #000; 
+            border: 10px solid #222; 
+            border-radius: 60px;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.5), 
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden; 
+        }
+
+        /* 2. The Screen Area */
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg); /* Screen background uses card_bg for theme */
+            border-radius: 50px; 
+            position: relative;
+            overflow-y: scroll; 
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Hide scrollbar for aesthetics */
+        .screen::-webkit-scrollbar {
+            display: none;
+        }
+        .screen {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+
+        /* 3. Dynamic Island Base Position */
+        .dynamic-island-wrapper {
+            position: absolute;
+            width: 100%;
+            padding-top: 15px; 
+            text-align: center;
+            z-index: 10;
+        }
+
+        #dynamic-island {
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            color: white;
+            border-radius: 20px; 
+            transition: all 0.3s ease-in-out; 
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .island-collapsed {
+            width: 120px;
+            height: 32px;
+        }
+        
+        .island-expanded {
+            width: 350px; 
+            height: 90px;
+            border-radius: 40px;
+        }
+
+        #island-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            padding: 0 8px;
+            width: 100%;
+            justify-content: space-between;
+            transition: opacity 0.3s ease;
+        }
+
+        #audio-visualizer {
+            display: none; 
+            width: 100px; 
+            height: 50px;
+            border-radius: 10px;
+            background: #1a1a1a;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scaleY(1); opacity: 0.8; }
+            50% { transform: scaleY(1.2); opacity: 1; }
+            100% { transform: scaleY(1); opacity: 0.8; }
+        }
+        .simulated-soundwave {
+            animation: pulse 1s infinite alternate;
+            background-image: linear-gradient(to right, #007bff, #1877f2, #007bff);
+        }
+
+        /* --- FACEBOOK APP STYLING --- */
+
+        .facebook-app {
+            padding-top: 55px; 
+            height: calc(100% - 55px);
+            background-color: var(--bg-color); 
+            transition: background-color 0.3s ease;
+        }
+
+        .fb-header {
+            background-color: var(--header-bg); 
+            padding: 10px 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky; 
+            top: 0;
+            z-index: 5;
+            transition: background-color 0.3s ease;
+        }
+
+        .fb-logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--fb-blue); 
+            text-align: left;
+        }
+
+        .fb-post-card {
+            background-color: var(--card-bg);
+            margin: 10px 0;
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-color); /* Uses theme text color */
+            margin-right: 5px;
+            transition: color 0.3s ease;
+        }
+        
+        /* New styling for the verified tick using SVG for accuracy */
+        .verified-tick {
+            display: inline-block;
+            width: 16px; /* Size of the tick image */
+            height: 16px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231877F2' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/%3E%3C/svg%3E");
+            background-size: cover;
+            margin-top: -3px; /* Align vertically */
+            margin-left: 2px;
+            flex-shrink: 0; /* Prevent it from shrinking */
+            transition: filter 0.3s ease; /* For changing SVG color */
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #606770; /* This can remain constant or change */
+            width: 100%; 
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+        }
+
+        #video-player {
+            background-color: #000;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        #video-player iframe {
+            display: block;
+        }
+
+        #target-text {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 0;
+            color: var(--text-color); /* Uses theme text color */
+            transition: color 0.3s ease; 
+        }
+
+        .post-actions-bar {
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        .action-btn {
+            background-color: var(--action-btn-bg);
+            color: var(--action-btn-text);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--border-color); /* Lighter hover in light, darker in dark */
+        }
+
+        .video-btn, .avatar-btn {
+            background-color: var(--fb-blue);
+            color: white;
+        }
+
+        .video-btn:hover, .avatar-btn:hover {
+            background-color: #166fe5; /* Slightly darker blue */
+        }
+
+        #youtube-link-input {
+            flex-grow: 1; 
+            padding: 6px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: 12px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        #name-color-input, #tick-color-input {
+            width: 80px;
+            padding: 4px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+    </style>
+</head>
+<body class=""> <div class="iphone-container">
+        <div class="iphone-frame">
+            <div class="screen">
+                
+                <div class="dynamic-island-wrapper">
+                    <div id="dynamic-island" class="island-collapsed">
+                        <div id="island-content">
+                            <span id="vietnam-time">10:09</span>
+                            <canvas id="audio-visualizer"></canvas> 
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="facebook-app">
+                    
+                    <div class="fb-header">
+                        <h1 class="fb-logo">facebook</h1>
+                    </div>
+
+                    <div class="fb-post-card">
+                        
+                        <div class="post-header">
+                            <img id="avatar-image" src="https://via.placeholder.com/50/007bff/ffffff?text=TD" alt="User Avatar" class="profile-avatar">
+                            <div class="user-details">
+                                <span class="user-name" id="userName">Trần Duy Bảo</span>
+                                <span class="verified-tick" id="verifiedTick" title="Verified"></span>
+                                <p class="post-time">1 min ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="post-content">
+                            <div id="video-player">
+                                <p>Paste a YouTube link below and press 'Load Video'</p>
+                            </div>
+                            <h3 id="target-text">This is the text that will change colors!</h3>
+                        </div>
+                        
+                        <div class="post-actions-bar">
+                            
+                            <div class="color-buttons">
+                                <button id="rainbow-text-btn" class="action-btn">🌈 Rainbow</button>
+                                <button id="rgb-text-btn" class="action-btn">🎨 RGB Cycle</button>
+                                <button id="random-text-btn" class="action-btn">🎲 Random</button>
+                            </div>
+                            
+                            <input type="text" id="youtube-link-input" placeholder="Paste YouTube Link">
+                            <button id="load-video-btn" class="action-btn video-btn">▶ Load Video</button>
+                            
+                            <button id="change-avatar-btn" class="action-btn avatar-btn">🖼 Change Avatar</button>
+                            
+                            <button id="toggle-night-mode-btn" class="action-btn">🌙 Night Mode</button>
+                            
+                            <div style="width: 100%; display: flex; gap: 8px; margin-top: 5px; align-items: center;">
+                                <label for="name-color-input" style="font-size: 12px; color: var(--text-color);">Name Color:</label>
+                                <input type="color" id="name-color-input" value="#050505">
+                                <label for="tick-color-input" style="font-size: 12px; color: var(--text-color);">Tick Color:</label>
+                                <input type="color" id="tick-color-input" value="#1877f2">
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
         const body = document.body;
         const island = document.getElementById('dynamic-island');
         const timeDisplay = document.getElementById('vietnam-time');
@@ -19,22 +399,24 @@
         const nameColorInput = document.getElementById('name-color-input');
         const tickColorInput = document.getElementById('tick-color-input');
 
+
         let rgbInterval; 
-        let isNightMode = false;
-        let soundwaveColorInterval; // New interval for color cycling
-        let hue = 0; // Starting hue for the soundwave
+        let isNightMode = false; // State for night mode
 
         // --- Night Mode Toggle ---
         toggleNightModeBtn.addEventListener('click', () => {
             isNightMode = !isNightMode;
             body.classList.toggle('night-mode', isNightMode);
             toggleNightModeBtn.textContent = isNightMode ? '☀️ Light Mode' : '🌙 Night Mode';
+            
+            // Reapply current name/tick colors in case theme changes how they look
             updateNameAndTickColors();
         });
 
         // --- Custom Name and Tick Color Update ---
         function updateNameAndTickColors() {
             userNameSpan.style.color = nameColorInput.value;
+            // For SVG background, we need to recreate it with the new color
             const newTickColor = tickColorInput.value;
             const svgData = encodeURIComponent(`
                 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
@@ -46,35 +428,14 @@
 
         nameColorInput.addEventListener('input', updateNameAndTickColors);
         tickColorInput.addEventListener('input', updateNameAndTickColors);
+
+        // Initial call to set default colors
         updateNameAndTickColors();
 
-        // --- 1. Dynamic Island Logic (Soundwave Color & Toggle) ---
-
-        function updateSoundwaveColor() {
-            hue = (hue + 2) % 360; // Increment hue by 2 for a smooth cycle
-            const color1 = `hsl(${hue}, 100%, 50%)`;
-            const color2 = `hsl(${(hue + 60) % 360}, 100%, 50%)`; // Secondary color offset
-            const color3 = `hsl(${(hue + 120) % 360}, 100%, 50%)`; // Tertiary color offset
-
-            // Apply the flowing rainbow using a CSS background gradient
-            visualizerCanvas.style.backgroundImage = `linear-gradient(to right, ${color1}, ${color2}, ${color3}, ${color2}, ${color1})`;
-        }
-
+        // --- Dynamic Island Collapse/Expand Toggle ---
         function startSimulatedSoundwave() {
             visualizerCanvas.style.display = 'block'; 
             visualizerCanvas.classList.add('simulated-soundwave');
-            
-            // Start the color cycling effect if not already running
-            if (!soundwaveColorInterval) {
-                soundwaveColorInterval = setInterval(updateSoundwaveColor, 100); // Update color every 100ms
-            }
-        }
-        
-        function stopSimulatedSoundwave() {
-            clearInterval(soundwaveColorInterval);
-            soundwaveColorInterval = null;
-            visualizerCanvas.classList.remove('simulated-soundwave');
-            visualizerCanvas.style.display = 'none';
         }
 
         island.addEventListener('click', () => {
@@ -86,16 +447,15 @@
             if (isExpanded) {
                 timeDisplay.style.display = 'block';
                 if (videoPlayerDiv.querySelector('iframe')) {
-                    // Start soundwave only if expanded AND video is loaded
                     startSimulatedSoundwave();
                 }
             } else {
-                // Stop soundwave when collapsed
-                stopSimulatedSoundwave();
+                visualizerCanvas.style.display = 'none';
+                visualizerCanvas.classList.remove('simulated-soundwave');
             }
         });
 
-        // --- 2. Vietnam Time Display ---
+        // --- Vietnam Time Display ---
         function updateVietnamTime() {
             const options = { 
                 timeZone: 'Asia/Ho_Chi_Minh', 
@@ -110,7 +470,7 @@
         updateVietnamTime();
         setInterval(updateVietnamTime, 1000); 
 
-        // --- 3. YouTube Video Player and Link Loader ---
+        // --- YouTube Video Player and Link Loader ---
         loadVideoBtn.addEventListener('click', () => {
             const link = youtubeLinkInput.value.trim();
             if (!link) {
@@ -135,14 +495,10 @@
                 allowfullscreen></iframe>`;
                 
             videoPlayerDiv.innerHTML = iframeHTML;
-            
-            // Ensure soundwave starts and is visible if the island is currently expanded
-            if (island.classList.contains('island-expanded')) {
-                startSimulatedSoundwave(); 
-            }
+            startSimulatedSoundwave(); 
         });
 
-        // --- 4. Avatar Changer ---
+        // --- Avatar Changer ---
         changeAvatarBtn.addEventListener('click', () => {
             const newURL = prompt('Enter the new image URL for your Facebook avatar:');
             
@@ -151,7 +507,8 @@
             }
         });
 
-        // --- 5. Text Color Manipulation Functions ---
+        // --- Text Color Manipulation Functions ---
+
         function resetText() {
             clearInterval(rgbInterval); 
             targetText.innerHTML = targetText.textContent; 
@@ -204,3 +561,5 @@
         rgbBtn.addEventListener('click', () => setRgbCycleText(targetText));
         randomBtn.addEventListener('click', () => setRandomText(targetText));
     </script>
+</body>
+</html>
