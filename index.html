@@ -1,34 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trần Duy Bảo's Dynamic FB</title>
     
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* CSS Variables for theming */
         :root {
             --bg-color: #f0f2f5;
-            --text-color: #050505;
+            --text-color: #050505; /* Black in light mode */
             --card-bg: #ffffff;
             --header-bg: #ffffff;
             --border-color: #ddd;
             --fb-blue: #1877f2;
             --input-bg: #e4e6eb;
             --input-border: #ddd;
-            --action-btn-bg: #e4e6eb;
+            --action-btn-bg: #f5f5f5;
             --action-btn-text: #000;
         }
 
         .night-mode {
-            --bg-color: #1a1a1a; /* Dark background */
-            --text-color: #e4e6eb; /* Light text */
-            --card-bg: #242526; /* Darker card background */
-            --header-bg: #242526; /* Darker header */
-            --border-color: #3e4042; /* Darker borders */
-            --fb-blue: #2d88ff; /* Slightly different blue for dark mode */
-            --input-bg: #3a3b3c; /* Dark input background */
-            --input-border: #3a3b3c; /* Dark input border */
+            --bg-color: #1a1a1a;
+            --text-color: #e4e6eb; /* White in dark mode */
+            --card-bg: #242526;
+            --header-bg: #242526;
+            --border-color: #3e4042;
+            --fb-blue: #2d88ff;
+            --input-bg: #3a3b3c;
+            --input-border: #3a3b3c;
             --action-btn-bg: #3a3b3c;
             --action-btn-text: #e4e6eb;
         }
@@ -40,7 +41,7 @@
             min-height: 100vh;
             background-color: var(--bg-color); 
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', Arial, sans-serif;
             transition: background-color 0.3s ease; 
             position: relative; 
             overflow: hidden; 
@@ -69,20 +70,21 @@
         .iphone-frame {
             width: 390px;
             height: 800px;
-            background: #000; 
-            border: 10px solid #222; 
+            background: #e9e9e9; 
+            border: 1px solid #c9c9c9; 
             border-radius: 60px;
             box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.5), 
-                inset 0 0 10px rgba(255, 255, 255, 0.1);
+                0 20px 50px rgba(0, 0, 0, 0.4), 
+                inset 0 0 10px rgba(255, 255, 255, 0.5); 
             position: relative;
             overflow: hidden; 
         }
 
         /* 2. The Screen Area */
         .screen {
-            width: 100%;
-            height: 100%;
+            width: calc(100% - 20px); 
+            height: calc(100% - 20px); 
+            margin: 10px;
             background: var(--card-bg); 
             border-radius: 50px; 
             position: relative;
@@ -91,23 +93,113 @@
             transition: background-color 0.3s ease;
         }
         
-        /* Hide scrollbar for aesthetics */
+        /* Ẩn thanh cuộn */
         .screen::-webkit-scrollbar {
             display: none;
         }
         .screen {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none; 
+            scrollbar-width: none; 
         }
 
+        /* 3. Status Bar (Điều chỉnh cho iPhone 17 Pro Max) */
+        .status-bar {
+            position: absolute;
+            top: 15px; /* Giảm top để có nhiều không gian hơn */
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            color: var(--text-color); 
+            font-size: 13px;
+            font-weight: 600; /* Semi-bold for iOS time */
+            z-index: 20;
+            pointer-events: none;
+        }
+        
+        /* --- NEW: iOS 17 Battery Icon CSS --- */
+        .battery-container {
+            width: 25px; 
+            height: 12px;
+            border: 1px solid currentColor;
+            border-radius: 3px;
+            position: relative;
+            transition: border-color 0.05s linear; /* Để RGB hoạt động */
+        }
 
-        /* 3. Dynamic Island Base Position */
+        .battery-cap {
+            width: 1.5px;
+            height: 4px;
+            background-color: currentColor;
+            position: absolute;
+            top: 4px;
+            right: -3px;
+            border-radius: 0 1px 1px 0;
+            transition: background-color 0.05s linear; /* Để RGB hoạt động */
+        }
+
+        .battery-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s ease, background-color 0.5s ease, opacity 0.3s ease;
+        }
+        
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* --- NEW: iOS 17 Signal/Wi-Fi Icon CSS --- */
+        .icon-svg {
+            width: 15px;
+            height: 15px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.05s linear;
+        }
+
+        /* Signal Bars */
+        .signal-bar {
+            width: 1px; /* Rất mỏng */
+            margin: 0 0.5px;
+            background-color: currentColor;
+            border-radius: 0.5px;
+            transition: background-color 0.05s linear;
+        }
+        
+        .signal-bar-1 { height: 4px; }
+        .signal-bar-2 { height: 7px; }
+        .signal-bar-3 { height: 10px; }
+        .signal-bar-4 { height: 13px; }
+
+
+        /* 4. Vị trí Đảo Động */
         .dynamic-island-wrapper {
             position: absolute;
             width: 100%;
-            padding-top: 15px; 
+            padding-top: 10px; /* Cân bằng lại với Status Bar mới */
             text-align: center;
             z-index: 10;
+        }
+        
+        /* Camera/Sensor Notch Area (Luôn hiển thị notch đen) */
+        #dynamic-island-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 32px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 9;
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
 
         #dynamic-island {
@@ -117,409 +209,193 @@
             background: #000;
             color: white;
             border-radius: 20px; 
-            transition: all 0.3s ease-in-out; 
-            cursor: pointer;
+            transition: all 0.3s ease-in-out, width 0.3s ease, height 0.3s ease, padding 0.3s ease, margin 0.3s ease; 
+            cursor: pointer; 
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
             overflow: hidden; 
-        }
-
-        #vietnam-time {
-            color: white; 
-            transition: all 0.3s;
+            position: relative;
+            z-index: 10;
         }
         
-        /* --- STATE 1: IDLE / COLLAPSED (Small Pill) --- */
-        .island-collapsed {
-            width: 120px;
-            height: 32px;
-            padding: 0;
-        }
-        .island-collapsed #island-content {
-            opacity: 1; 
-            padding: 0 15px;
-            justify-content: space-between;
-        }
-        .island-collapsed #music-shrunk-info, 
-        .island-collapsed #music-expanded-card {
-            display: none;
-        }
-
-
-        /* --- STATE 2: MUSIC SHRUNK (Wider Pill with Music Info) --- */
-        .shrunk-music {
-            width: 250px; 
-            height: 37px;
-            border-radius: 20px;
-            padding: 0 10px;
-            justify-content: flex-start;
-        }
-
-        .shrunk-music #island-content {
-            padding: 0;
-            opacity: 1;
-            justify-content: flex-start;
-            gap: 12px;
-        }
-
-        .shrunk-music #vietnam-time {
-            display: block !important;
-            opacity: 1;
-            width: auto;
-        }
-        
-        .shrunk-music #music-shrunk-info {
+        #island-content {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-        
-        .shrunk-music #music-expanded-card {
-            display: none;
-        }
-        
-        #audio-active-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #8c8c8c; 
-            border-radius: 50%;
-            margin-left: auto; 
+            height: 100%;
+            width: 100%;
+            transition: opacity 0.3s ease;
         }
 
-        /* --- STATE 3: MUSIC EXPANDED (The Full Player) --- */
-        .expanded-music {
+        /* --- TRẠNG THÁI 1: THU GỌN (Nhỏ nhất - Giống Notch) --- */
+        .island-collapsed {
+            width: 45px; 
+            height: 32px;
+            padding: 0;
+            margin-left: 75px; 
+        }
+        
+        /* --- TRẠNG THÁI 2: ĐANG PHÁT NHẠC (Viên thuốc trung bình) --- */
+        .island-playing-shrunk {
+            width: 170px; 
+            height: 36px;
+            padding: 0 10px;
+            margin-left: -5px; 
+            justify-content: space-between;
+        }
+        
+        /* Sound Bar CSS */
+        .bar {
+            width: 2px;
+            margin: 0 0.5px;
+            background-color: #34d399; /* Green/Mint */
+            animation: soundwave 0.5s infinite alternate;
+            transform-origin: bottom;
+            border-radius: 1px;
+            transition: background-color 0.05s linear; /* Để RGB hoạt động */
+        }
+
+        .bar:nth-child(1) { height: 8px; animation-delay: 0.1s; }
+        .bar:nth-child(2) { height: 14px; animation-delay: 0.2s; }
+        .bar:nth-child(3) { height: 5px; animation-delay: 0.3s; }
+        .bar:nth-child(4) { height: 10px; animation-delay: 0.4s; }
+        .bar:nth-child(5) { height: 7px; animation-delay: 0.5s; }
+
+        @keyframes soundwave {
+            0% { transform: scaleY(0.5); }
+            100% { transform: scaleY(1.5); }
+        }
+        
+        /* --- TRẠNG THÁI 3: MỞ RỘNG (Full Player) --- */
+        .island-expanded {
             width: 350px; 
-            height: 400px; 
-            border-radius: 40px;
-            align-items: flex-start; 
-            padding: 15px 15px 25px 15px;
-            background: #000;
+            height: 480px; 
+            padding: 20px;
+            border-radius: 40px; 
+            flex-direction: column;
+            align-items: flex-start;
+            margin: 0;
+            cursor: default; 
         }
         
-        .expanded-music #island-content {
-            display: none; 
+        /* Ẩn nội dung khi ở trạng thái 0 */
+        .island-collapsed #island-content {
+            opacity: 0; 
         }
-        
-        .expanded-music #music-expanded-card {
+
+        /* --- PHONG CÁCH PLAYER MỞ RỘNG --- */
+        .expanded-player-content {
             display: flex;
             flex-direction: column;
             width: 100%;
             height: 100%;
-        }
-        
-        .expanded-music #vietnam-time {
-            display: none;
-        }
-        
-        /* Expanded Card Header (Top Bar) */
-        .expanded-card-header {
-            display: flex;
-            width: 100%;
             justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            color: #999;
+        }
+
+        #album-art-large {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
             margin-bottom: 20px;
         }
 
-        /* Album Art and Details */
-        .album-info {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-            margin-bottom: 25px;
-        }
-        
-        #album-art {
-            width: 100px;
-            height: 100px;
-            border-radius: 8px;
-            object-fit: cover;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        }
-        
-        .track-details {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .track-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 4px;
-        }
-        
-        .track-artist {
-            font-size: 16px;
-            color: #ccc;
-        }
-
-        /* Progress Bar */
-        .progress-bar-container {
-            width: 100%;
-            margin-bottom: 25px;
-        }
-        
-        .progress-bar {
+        .progress-container {
             width: 100%;
             height: 4px;
-            background-color: #333;
+            background-color: #3a3b3c;
             border-radius: 2px;
-            margin-bottom: 5px;
+            margin: 10px 0;
             position: relative;
         }
         
-        .progress-fill {
+        .progress-bar {
             height: 100%;
-            width: 65%; 
-            background-color: #fff; 
+            width: 0%;
+            background-color: #fff;
             border-radius: 2px;
         }
         
         .time-labels {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            color: #888;
+            width: 100%;
+            font-size: 11px;
+            color: #ccc;
         }
-
-        /* Media Controls */
-        .media-controls {
+        
+        .large-controls {
             display: flex;
             justify-content: space-around;
             align-items: center;
             width: 100%;
-            margin-bottom: 25px;
+            margin-top: 20px;
         }
         
-        .control-btn {
+        .large-controls button {
             background: none;
             border: none;
             color: white;
-            font-size: 30px;
+            padding: 10px;
             cursor: pointer;
-            padding: 5px;
-            transition: opacity 0.2s;
+            transition: transform 0.1s ease;
         }
         
-        .control-btn:hover {
-            opacity: 0.7;
+        .large-controls button:active {
+            transform: scale(0.9);
         }
         
-        .play-pause-btn {
-            font-size: 50px;
+        .play-pause-btn-large svg {
+            width: 48px;
+            height: 48px;
+        }
+        
+        .skip-btn-large svg {
+            width: 28px;
+            height: 28px;
         }
 
-        /* Volume/Airplay Controls */
-        .volume-airplay {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            font-size: 20px;
-            color: #ccc;
-        }
-        
-        /* --- SOUNDWAVE STYLES --- */
-        .soundwave-container {
-            display: flex;
-            align-items: center; 
-            height: 20px; 
-            gap: 2px; 
-            overflow: hidden; 
-            position: relative;
-            width: 40px; 
-            justify-content: center;
-        }
-        
-        #expanded-visualizer.soundwave-container {
-            height: 50px; 
-            width: 100%; 
-            margin-top: auto; 
-            filter: opacity(0.5);
-            justify-content: space-around; 
-        }
-
-        .soundwave-bar {
-            width: 4px; 
-            height: 2px; 
-            background-color: #fff; 
-            border-radius: 1px; 
-            transition: height 0.1s ease-out, background-color 0.1s ease-out; 
-            transform-origin: bottom; 
-        }
-        
-        /* --- FACEBOOK APP STYLING --- */
-
+        /* --- PHONG CÁCH ỨNG DỤNG FACEBOOK (Thu nhỏ nút) --- */
         .facebook-app {
-            padding-top: 55px; 
-            height: calc(100% - 55px);
-            background-color: var(--bg-color); 
-            transition: background-color 0.3s ease;
-        }
-
-        .fb-header {
-            background-color: var(--header-bg); 
-            padding: 10px 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            position: sticky; 
-            top: 0;
-            z-index: 5;
-            transition: background-color 0.3s ease;
-        }
-
-        .fb-logo {
-            font-size: 26px;
-            font-weight: bold;
-            color: var(--fb-blue); 
-            text-align: left;
-        }
-
-        .fb-post-card {
-            background-color: var(--card-bg);
-            margin: 10px 0;
-            padding: 15px;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .profile-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-            border: 1px solid #eee;
-        }
-
-        .user-details {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .user-name {
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--text-color); 
-            margin-right: 5px;
-            transition: color 0.3s ease;
+            padding-top: 70px; /* Giảm padding */
         }
         
-        .verified-tick {
-            display: inline-block;
-            width: 16px; 
-            height: 16px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231877F2' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/>
-                </svg>");
-            background-size: cover;
-            margin-top: -3px; 
-            margin-left: 2px;
-            flex-shrink: 0; 
-            transition: filter 0.3s ease; 
+        .button-group { 
+            padding: 8px; /* Giảm padding */
+            gap: 6px; /* Giảm khoảng cách giữa các nút */
         }
-
-        .post-time {
-            font-size: 12px;
-            color: #606770; 
-            width: 100%; 
+        .action-btn { 
+            padding: 6px 10px; /* Giảm padding nút */
+            border-radius: 6px; /* Giảm bo góc */
+            font-size: 12px; /* Giảm font size */
         }
-
-        .post-content {
-            margin-bottom: 15px;
-        }
-
-        #video-player {
-            background-color: #000;
-            height: 200px;
-            display: flex;
+        .music-controls {
             justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 14px;
-            margin-bottom: 10px;
+            gap: 15px;
         }
 
-        #video-player iframe {
-            display: block;
-        }
-
-        #song-artist-info { 
-            font-size: 14px;
-            color: #606770;
-            margin-top: -5px;
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        #target-text {
-            font-size: 18px;
-            font-weight: bold;
-            padding: 10px 0;
-            color: var(--text-color); 
-            transition: color 0.3s ease; 
-        }
-
-        .post-actions-bar {
-            padding-top: 10px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            transition: border-color 0.3s ease;
-        }
-
-        .action-btn {
-            background-color: var(--action-btn-bg);
-            color: var(--action-btn-text);
-            border: none;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        .action-btn:hover {
-            background-color: var(--border-color); 
-        }
-
-        .video-btn, .avatar-btn {
-            background-color: var(--fb-blue);
-            color: white;
-        }
-
-        .video-btn:hover, .avatar-btn:hover {
-            background-color: #166fe5; 
-        }
-
-        #youtube-link-input {
-            flex-grow: 1; 
-            padding: 6px;
-            border: 1px solid var(--input-border);
-            border-radius: 6px;
-            font-size: 12px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-        }
-
-        #name-color-input, #tick-color-input {
-            width: 80px;
-            padding: 4px;
-            border: 1px solid var(--input-border);
-            border-radius: 4px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-        }
-
+        /* Các style còn lại */
+        .fb-logo { font-size: 26px; font-weight: bold; color: var(--fb-blue); text-align: left; }
+        .fb-post-card { background-color: var(--card-bg); margin: 10px 0; padding: 15px; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .post-actions-bar { padding-top: 10px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; transition: border-color 0.3s ease; }
+        .video-btn, .avatar-btn { color: white; background-image: linear-gradient(135deg, var(--fb-blue) 0%, #3b90ff 100%); }
+        .video-btn:hover, .avatar-btn:hover { background-image: linear-gradient(135deg, #166fe5 0%, #2d88ff 100%); box-shadow: 0 4px 10px rgba(24, 119, 242, 0.4); top: -1px; }
+        .post-header { display: flex; align-items: center; margin-bottom: 10px; }
+        .profile-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; object-fit: cover; border: 1px solid #eee; }
+        .user-details { display: flex; align-items: center; flex-wrap: wrap; }
+        .user-name { font-weight: 700; font-size: 14px; color: var(--text-color); margin-right: 5px; transition: color 0.3s ease; cursor: pointer; }
+        .verified-tick { display: inline-block; width: 16px; height: 16px; background-size: cover; margin-top: -3px; margin-left: 2px; flex-shrink: 0; transition: filter 0.3s ease; }
+        .post-time { font-size: 12px; color: #606770; width: 100%; }
+        .post-content { margin-bottom: 15px; }
+        #video-player { position: relative; width: 100%; padding-top: 56.25%; background-color: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+        #video-player iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        #video-art-player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #1a1a1a; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #ccc; font-size: 16px; border-radius: 12px; opacity: 1; transition: opacity 0.3s ease; }
+        .video-art-icon { font-size: 40px; margin-bottom: 10px; }
+        #target-text { font-size: 18px; font-weight: bold; padding: 10px 0; color: var(--text-color); transition: color 0.3s ease; cursor: pointer; }
+        .dynamic-text-span { transition: color 0.3s ease; }
+        .button-group-label { font-weight: bold; font-size: 10px; text-transform: uppercase; color: #606770; width: 100%; margin-bottom: -5px; }
+        .input-group { display: flex; gap: 8px; width: 100%; }
+        .input-group input { flex-grow: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--text-color); transition: border-color 0.2s; }
+        .input-group input:focus { border-color: var(--fb-blue); outline: none; }
+        
     </style>
 </head>
 <body class=""> 
@@ -530,80 +406,90 @@
         <div class="iphone-frame">
             <div class="screen">
                 
+                <div class="status-bar">
+                    <span id="vietnam-time" class="time">9:41</span>
+                    
+                    <div class="flex items-center space-x-1.5" id="statusBarIconsGroup">
+                        
+                        <div id="cellSignal" class="flex items-end h-3 space-x-[1px] opacity-90 text-current">
+                            <div class="signal-bar signal-bar-1 opacity-90"></div>
+                            <div class="signal-bar signal-bar-2 opacity-90"></div>
+                            <div class="signal-bar signal-bar-3 opacity-90"></div>
+                            <div class="signal-bar signal-bar-4 opacity-50"></div>
+                        </div>
+
+                        <svg id="wifiIcon" class="icon-svg opacity-90" viewBox="0 0 24 24">
+                            <path d="M5 12.55C6.88 10.2 9.54 9 12 9s5.12 1.2 7 3.55M1.49 9C3.76 6.31 7.21 5 12 5s8.24 1.31 10.51 4M8.53 15C9.43 13.9 10.66 13.2 12 13.2s2.57.7 3.47 1.8M12 18.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                        </svg>
+
+                        <div id="batteryGroup" class="flex items-center text-[13px] font-medium">
+                            <span id="batteryPercent" class="mr-1 transition-colors duration-50">75%</span>
+                            <div id="batteryShell" class="battery-container text-current">
+                                <div id="batteryFill" class="battery-fill"></div>
+                            </div>
+                            <div id="batteryCap" class="battery-cap text-current"></div>
+                        </div>
+
+                    </div>
+                </div>
+                
                 <div class="dynamic-island-wrapper">
+                    <div id="dynamic-island-notch"></div> 
+                    
                     <div id="dynamic-island" class="island-collapsed">
                         
                         <div id="island-content">
-                            <span id="vietnam-time">09:41</span>
                             
-                            <div id="music-shrunk-info" style="display: none;">
-                                <span style="font-size: 14px; margin-right: 5px;">0:08</span>
+                            <div id="music-playing-shrunk-content" class="flex items-center space-x-2 w-full justify-between">
+                                <div id="shrunk-time" class="text-sm font-bold" style="color:#34d399;">0:00</div>
                                 
-                                <div id="audio-visualizer" class="soundwave-container">
-                                    <div class="soundwave-bar"></div>
-                                    <div class="soundwave-bar"></div>
-                                    <div class="soundwave-bar"></div>
-                                    <div class="soundwave-bar"></div>
-                                    <div class="soundwave-bar"></div>
+                                <div id="sound-bars-shrunk" class="flex items-end h-5 space-x-0.5">
+                                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
                                 </div>
-                                <span id="audio-active-dot"></span>
-                            </div>
-
-                            <span style="font-size: 14px;"></span>
-                        </div>
-                        
-                        <div id="music-expanded-card" style="display: none;">
-                            <div class="expanded-card-header">
-                                <span id="expanded-track-label">Media Player</span>
-                                <span id="expanded-card-visualizer-icon">|||</span>
-                            </div>
-
-                            <div class="album-info">
-                                <img id="album-art" src="https://via.placeholder.com/100/551A8B/FFFFFF?text=Album+Art" alt="Album Art">
-                                <div class="track-details">
-                                    <span class="track-title" id="expandedTrackTitle">Song Title</span>
-                                    <span class="track-artist" id="expandedTrackArtist">Artist Name</span>
-                                </div>
+                                
+                                <span class="text-yellow-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21a1 1 0 0 1-1-1v-4.382A7 7 0 0 1 5 12a7 7 0 0 1 6-4.618V4a1 1 0 0 1 2 0v4.382A7 7 0 0 1 19 12a7 7 0 0 1-6 4.618V20a1 1 0 0 1-1 1z"/></svg>
+                                </span>
                             </div>
                             
-                            <div class="progress-bar-container">
-                                <div class="progress-bar">
-                                    <div class="progress-fill"></div>
+                            <div id="music-expanded-player" class="expanded-player-content hidden">
+                                
+                                <div class="flex flex-col items-center w-full">
+                                    <img id="album-art-large" src="https://placehold.co/400x400/000000/ff5e00?text=ART" alt="Album Art">
+                                    <div class="text-center mb-6">
+                                        <span id="track-title-expanded" class="text-2xl font-bold block">Tiêu Đề Bài Hát</span>
+                                        <span id="track-artist-expanded" class="text-lg font-light text-gray-400 block">Ca Sĩ</span>
+                                    </div>
                                 </div>
-                                <div class="time-labels">
-                                    <span>2:50</span>
-                                    <span>-0:51</span>
+                                
+                                <div class="w-full">
+                                    <div class="progress-container">
+                                        <div id="progress-bar-fill" class="progress-bar"></div>
+                                    </div>
+                                    <div class="time-labels">
+                                        <span id="current-time-label">0:00</span>
+                                        <span id="remaining-time-label">-3:41</span>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="media-controls">
-                                <button class="control-btn">⏮</button>
-                                <button class="control-btn play-pause-btn">❚❚</button>
-                                <button class="control-btn">⏭</button>
+                                
+                                <div class="large-controls">
+                                    <button class="skip-btn-large">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-7 6 7 6zm3-12v12l7-6-7-6z"/></svg>
+                                    </button>
+                                    <button id="toggle-play-pause-large" class="play-pause-btn-large">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3v18l12-9-12-9z"/></svg>
+                                    </button>
+                                    <button class="skip-btn-large">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13 18V6l7 6-7 6zm-7-6-7 6V6l7 6z"/></svg>
+                                    </button>
+                                </div>
+                                
+                                <div class="volume-icon absolute bottom-5 right-5">
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21a1 1 0 0 1-1-1v-4.382A7 7 0 0 1 5 12a7 7 0 0 1 6-4.618V4a1 1 0 0 1 2 0v4.382A7 7 0 0 1 19 12a7 7 0 0 1-6 4.618V20a1 1 0 0 1-1 1z"/></svg>
+                                </div>
+                                
                             </div>
                             
-                            <div class="volume-airplay">
-                                <span>🔈</span>
-                                <span>📶</span>
-                            </div>
-
-                            <div id="expanded-visualizer" class="soundwave-container">
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                                <div class="soundwave-bar"></div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -617,51 +503,65 @@
                     <div class="fb-post-card">
                         
                         <div class="post-header">
-                            <img id="avatar-image" src="https://via.placeholder.com/50/007bff/ffffff?text=TD" alt="User Avatar" class="profile-avatar">
+                            <img id="avatar-image" src="https://via.placeholder.com/50/007bff/ffffff?text=TD" alt="Ảnh Đại Diện" class="profile-avatar">
                             <div class="user-details">
-                                <span class="user-name" id="userName">Trần Duy Bảo</span>
-                                <span class="verified-tick" id="verifiedTick" title="Verified"></span>
-                                <p class="post-time">1 min ago</p>
+                                <span class="user-name dynamic-text-span" id="userName">Trần Duy Bảo</span>
+                                <span class="verified-tick" id="verifiedTick" title="Đã xác minh"></span>
+                                <p class="post-time">1 phút trước</p>
                             </div>
                         </div>
                         
                         <div class="post-content">
+                            
                             <div id="video-player">
-                                <p>Paste a YouTube link below and press 'Load Video'</p>
+                                <div id="video-art-player">
+                                    <span class="video-art-icon">▶️</span>
+                                    <p>Dán liên kết YouTube để xem video</p>
+                                </div>
                             </div>
                             
-                            <p id="song-artist-info" style="display: none;"></p>
+                            <h3 id="target-text" class="dynamic-text-span">Đây là dòng chữ sẽ thay đổi màu sắc!</h3>
                             
-                            <h3 id="target-text">This is the text that will change colors!</h3>
                         </div>
                         
                         <div class="post-actions-bar">
                             
-                            <button id="change-text-btn" class="action-btn video-btn">✏️ Change Post Text</button>
+                            <div class="input-group">
+                                <input type="text" id="youtube-link-input" placeholder="Dán Liên Kết YouTube (ví dụ: https://youtu.be/dQw4w9WgXcQ)">
+                                <button id="load-video-btn" class="action-btn video-btn">▶ Tải Video</button>
+                            </div>
                             
-                            <button id="change-name-btn" class="action-btn avatar-btn">👤 Change Name</button>
-                            <input type="file" id="avatar-file-input" accept="image/*" style="display: none;">
-                            <button id="upload-avatar-btn" class="action-btn avatar-btn">📷 Upload Avatar</button>
+                            <div class="button-group">
+                                <span class="button-group-label">DYNAMIC ISLAND (NHẠC)</span>
+                                <input type="file" id="art-file-input" accept="image/*" style="display: none;">
+                                <button id="upload-art-btn" class="action-btn avatar-btn">🖼️ Tải Ảnh Art Nhạc</button>
+                                <button id="update-track-info-btn" class="action-btn video-btn">🎵 Đổi Tên/Ca Sĩ</button>
+                                <div class="music-controls w-full flex-wrap">
+                                    <button id="toggle-tick-rgb-btn" class="action-btn flex-grow">✅ Bật/Tắt Nhạc & RGB</button>
+                                </div>
+                            </div>
                             
-                            <button id="rgb-header-btn" class="action-btn video-btn">🌈 Cycle Header</button>
+                            <div class="button-group">
+                                <span class="button-group-label">VĂN BẢN (TÊN NGƯỜI DÙNG)</span>
+                                <button id="change-name-btn" class="action-btn avatar-btn">👤 Thay Đổi Tên</button>
+                                <button id="name-rgb-btn" class="action-btn">🎨 RGB Quay Vòng</button>
+                                <button id="name-reset-btn" class="action-btn">❌ Đặt Lại Màu</button>
+                            </div>
+                            
+                            <div class="button-group">
+                                <span class="button-group-label">VĂN BẢN (TIÊU ĐỀ BÀI VIẾT)</span>
+                                <button id="change-text-btn" class="action-btn">✏️ Thay Đổi Nội Dung</button>
+                                <button id="text-rgb-btn" class="action-btn">🎨 RGB Quay Vòng</button>
+                                <button id="text-reset-btn" class="action-btn">❌ Đặt Lại Màu</button>
+                            </div>
 
-                            <div class="color-buttons">
-                                <button id="rainbow-text-btn" class="action-btn">🌈 Rainbow</button>
-                                <button id="rgb-text-btn" class="action-btn">🎨 RGB Cycle</button>
-                                <button id="random-text-btn" class="action-btn">🎲 Random</button>
+                            <div class="button-group">
+                                <span class="button-group-label">KHÁC</span>
+                                <input type="file" id="avatar-file-input" accept="image/*" style="display: none;">
+                                <button id="upload-avatar-btn" class="action-btn avatar-btn">📷 Tải Ảnh Đại Diện</button>
+                                <button id="toggle-night-mode-btn" class="action-btn">🌙 Chế độ Ban Đêm</button>
                             </div>
                             
-                            <input type="text" id="youtube-link-input" placeholder="Paste YouTube Link">
-                            <button id="load-video-btn" class="action-btn video-btn">▶ Load Video</button>
-                            
-                            <button id="toggle-night-mode-btn" class="action-btn">🌙 Night Mode</button>
-                            
-                            <div style="width: 100%; display: flex; gap: 8px; margin-top: 5px; align-items: center;">
-                                <label for="name-color-input" style="font-size: 12px; color: var(--text-color);">Name Color:</label>
-                                <input type="color" id="name-color-input" value="#050505">
-                                <label for="tick-color-input" style="font-size: 12px; color: var(--text-color);">Tick Color:</label>
-                                <input type="color" id="tick-color-input" value="#1877f2">
-                            </div>
                         </div>
                         
                     </div>
@@ -673,330 +573,295 @@
     </div>
 
     <script>
-        // --- Element Selection ---
+        // --- CHỌN PHẦN TỬ & KHAI BÁO BIẾN ---
         const body = document.body;
         const island = document.getElementById('dynamic-island');
+        const musicGlowBackground = document.getElementById('music-glow-background'); 
+        
+        // Status Bar (MỚI)
         const timeDisplay = document.getElementById('vietnam-time');
+        const statusBarIconsGroup = document.getElementById('statusBarIconsGroup');
+        const cellSignalEl = document.getElementById('cellSignal');
+        const wifiIconEl = document.getElementById('wifiIcon');
+        const batteryGroupEl = document.getElementById('batteryGroup');
+        const batteryPercentEl = document.getElementById('batteryPercent');
+        const batteryShellEl = document.getElementById('batteryShell');
+        const batteryFillEl = document.getElementById('batteryFill');
+        const batteryCapEl = document.getElementById('batteryCap');
+        const signalBars = cellSignalEl.querySelectorAll('.signal-bar');
+        
+        // Dynamic Island
+        const islandNotch = document.getElementById('dynamic-island-notch');
+        const musicPlayingShrunkContent = document.getElementById('music-playing-shrunk-content');
+        const musicExpandedPlayer = document.getElementById('music-expanded-player');
+        const albumArtLargeImg = document.getElementById('album-art-large');
+        const shrunkTimeDisplay = document.getElementById('shrunk-time');
+        const currentTimeLabel = document.getElementById('current-time-label');
+        const remainingTimeLabel = document.getElementById('remaining-time-label');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        const trackTitleExpanded = document.getElementById('track-title-expanded');
+        const trackArtistExpanded = document.getElementById('track-artist-expanded');
+        const togglePlayPauseLargeBtn = document.getElementById('toggle-play-pause-large');
+        
+        // Video
         const youtubeLinkInput = document.getElementById('youtube-link-input');
         const loadVideoBtn = document.getElementById('load-video-btn');
-        const videoPlayerDiv = document.getElementById('video-player');
-        
-        // --- Music Player Specific Elements ---
-        const musicShrunkInfo = document.getElementById('music-shrunk-info');
-        const musicExpandedCard = document.getElementById('music-expanded-card');
-        const audioDot = document.getElementById('audio-active-dot');
-        const expandedTrackTitle = document.getElementById('expandedTrackTitle');
-        const expandedTrackArtist = document.getElementById('expandedTrackArtist');
-        const expandedTrackLabel = document.getElementById('expanded-track-label'); 
+        const videoPlayer = document.getElementById('video-player');
+        const videoArtPlayer = document.getElementById('video-art-player');
 
-        // Post Card Info
-        const songArtistInfo = document.getElementById('song-artist-info');
-
-        // Soundwave elements
-        const shrunkSoundwaveContainer = document.getElementById('audio-visualizer');
-        const expandedSoundwaveContainer = document.getElementById('expanded-visualizer');
-        let shrunkSoundwaveBars; 
-        let expandedSoundwaveBars; 
-
-        // Music Glow Background element
-        const musicGlowBackground = document.getElementById('music-glow-background');
-
-
-        // --- Profile Elements ---
-        const changeNameBtn = document.getElementById('change-name-btn'); 
-        const uploadAvatarBtn = document.getElementById('upload-avatar-btn'); 
-        const avatarFileInput = document.getElementById('avatar-file-input'); 
-        const avatarImage = document.getElementById('avatar-image'); 
+        // Hồ Sơ & Văn bản
         const userNameSpan = document.getElementById('userName'); 
-
-        // --- Text/Color Elements ---
-        const targetText = document.getElementById('target-text');
-        const changeTextBtn = document.getElementById('change-text-btn'); 
-        const rainbowBtn = document.getElementById('rainbow-text-btn');
-        const rgbBtn = document.getElementById('rgb-text-btn');
-        const randomBtn = document.getElementById('random-text-btn');
-        const toggleNightModeBtn = document.getElementById('toggle-night-mode-btn');
-        const rgbHeaderBtn = document.getElementById('rgb-header-btn'); 
         const verifiedTickSpan = document.getElementById('verifiedTick');
-        const nameColorInput = document.getElementById('name-color-input');
-        const tickColorInput = document.getElementById('tick-color-input');
+        const targetText = document.getElementById('target-text');
 
-        // --- State Variables ---
-        let rgbInterval;
-        let headerRgbInterval; 
-        let soundwaveAnimationInterval; 
+        // Nút Dynamic Island
+        const uploadArtBtn = document.getElementById('upload-art-btn');
+        const artFileInput = document.getElementById('art-file-input');
+        const updateTrackInfoBtn = document.getElementById('update-track-info-btn');
+        const toggleDynamicTickBtn = document.getElementById('toggle-tick-rgb-btn');
+        const toggleNightModeBtn = document.getElementById('toggle-night-mode-btn');
+
+        // --- Biến Trạng Thái ---
+        let globalIntervals = {}; 
+        let headerRgbInterval = null; 
         let isNightMode = false;
-        let hue = 0; // Global hue for all color animations
-        let musicActive = false; 
-        let islandState = 'collapsed'; 
-        let currentTrackTitle = "Song Title";
-        let currentTrackArtist = "Artist Name";
+        let hue = 0; 
+        let currentTrack = "Entropy"; // Default track name
+        let currentArtist = "Beach Bunny"; // Default artist name
+        let defaultAlbumArt = "https://placehold.co/400x400/000000/ff5e00?text=ART";
+        
+        // Dynamic Island State Machine
+        // 0: Collapsed (Notch) | 1: Playing Shrunk (Medium Pill) | 2: Expanded (Full Player)
+        let islandState = 0; 
+        const totalDurationSeconds = 221; // 3:41
+        let currentProgressSeconds = 0;
+        let progressInterval = null;
+        
+        // Pin và Thời gian (MỚI)
+        let currentBatteryLevel = 75; // Mức pin giả lập ban đầu
+        const BATTERY_COLORS = {
+            green: 'bg-green-500',
+            yellow: 'bg-yellow-400',
+            red: 'bg-red-500'
+        };
 
-        // Initialize soundwave bars after the DOM is loaded
+        // ===================================
+        // --- LOGIC KHỞI TẠO ---
+        // ===================================
+
         document.addEventListener('DOMContentLoaded', () => {
-            shrunkSoundwaveBars = Array.from(shrunkSoundwaveContainer.querySelectorAll('.soundwave-bar'));
-            expandedSoundwaveBars = Array.from(expandedSoundwaveContainer.querySelectorAll('.soundwave-bar'));
-        });
+            updateNameAndTickColors();
+            albumArtLargeImg.src = defaultAlbumArt;
+            videoArtPlayer.innerHTML = `<img src="${defaultAlbumArt}" alt="Video Art" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
 
-
-        // ===================================
-        // --- DYNAMIC ISLAND 2-STATE LOGIC ---
-        // ===================================
-
-        function updateIslandClasses() {
-            island.classList.remove('island-collapsed', 'shrunk-music', 'expanded-music');
-            island.classList.add(islandState);
-
-            const isMusicPlaying = musicActive;
-
-            if (islandState === 'collapsed') {
-                musicShrunkInfo.style.display = 'none';
-                musicExpandedCard.style.display = 'none';
-                timeDisplay.style.display = 'block'; 
-                stopSoundwave(); 
-                stopMusicGlow(); 
-
-            } else if (islandState === 'shrunk-music' && isMusicPlaying) {
-                musicShrunkInfo.style.display = 'flex';
-                musicExpandedCard.style.display = 'none';
-                timeDisplay.style.display = 'block';
-                startSoundwave(shrunkSoundwaveBars, shrunkSoundwaveContainer.clientHeight); 
-                startMusicGlow(); 
-
-            } else if (islandState === 'expanded-music' && isMusicPlaying) {
-                musicShrunkInfo.style.display = 'none';
-                musicExpandedCard.style.display = 'flex';
-                timeDisplay.style.display = 'none';
-                startSoundwave(expandedSoundwaveBars, expandedSoundwaveContainer.clientHeight); 
-                startMusicGlow(); 
+            updateTrackDisplay();
+            updateTime();
+            updateBattery(currentBatteryLevel);
             
-            } else {
-                islandState = 'collapsed';
-                updateIslandClasses(); 
-            }
-        }
+            // Cập nhật thời gian mỗi giây
+            setInterval(updateTime, 1000); 
+            // Giả lập Pin giảm dần (chỉ để demo)
+            setInterval(() => {
+                currentBatteryLevel = (currentBatteryLevel - 1);
+                if (currentBatteryLevel < 0) currentBatteryLevel = 100;
+                updateBattery(currentBatteryLevel);
+            }, 3000); 
+            
+            // Khởi tạo trạng thái Đảo Động
+            setIslandState(0);
+        });
         
-        island.addEventListener('click', () => {
-            if (!musicActive) {
-                 if (islandState === 'collapsed') {
-                     islandState = 'shrunk-music';
-                 } else {
-                     islandState = 'collapsed';
-                 }
-            } else {
-                if (islandState === 'shrunk-music') {
-                    islandState = 'expanded-music';
+        // --- LOGIC STATUS BAR MỚI (Thời gian, Pin) ---
+        function updateTime() {
+            const options = { 
+                timeZone: 'Asia/Ho_Chi_Minh', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: false // Giống iOS (Mặc định 24h trừ khi có cài đặt AM/PM)
+            };
+            const vnTime = new Date().toLocaleTimeString('en-US', options);
+            timeDisplay.textContent = vnTime;
+        }
+
+        function updateBattery(level) {
+            const percent = Math.max(0, Math.min(100, level)); 
+            
+            // 1. Cập nhật chữ hiển thị
+            batteryPercentEl.textContent = `${percent}%`;
+
+            // 2. Cập nhật chiều rộng thanh Pin
+            batteryFillEl.style.width = `${percent}%`;
+
+            // 3. Cập nhật màu sắc (Nếu đang ở chế độ RGB, logic này bị bỏ qua)
+            if (!headerRgbInterval) {
+                // Đặt lại màu pin mặc định cho chế độ Tĩnh
+                Object.values(BATTERY_COLORS).forEach(cls => batteryFillEl.classList.remove(cls));
+                
+                let iconColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+
+                if (percent <= 20) {
+                    // Mức pin yếu (màu đỏ)
+                    batteryFillEl.classList.add(BATTERY_COLORS.red);
+                    iconColor = '#ef4444'; // Tailwind red-500
+                    
+                    // Hiệu ứng "Pin yếu" (nhấp nháy)
+                    if (percent < 10) {
+                        batteryFillEl.style.animation = 'blink 1s steps(1, end) infinite';
+                    } else {
+                        batteryFillEl.style.animation = 'none';
+                    }
+                } else if (percent <= 50) {
+                    // Mức pin trung bình (màu vàng)
+                    batteryFillEl.classList.add(BATTERY_COLORS.yellow);
+                    batteryFillEl.style.animation = 'none';
                 } else {
-                    islandState = 'shrunk-music';
+                    // Mức pin đầy (màu xanh lá)
+                    batteryFillEl.classList.add(BATTERY_COLORS.green);
+                    batteryFillEl.style.animation = 'none';
                 }
-            }
-            updateIslandClasses();
-        });
-
-
-        // ===================================
-        // --- NEW TEXT/TRACK INFO LOGIC ---
-        // ===================================
-
-        changeTextBtn.addEventListener('click', () => {
-            const newText = prompt('Enter the new text for the post title:');
-            
-            if (newText !== null) {
-                resetText(); 
-                targetText.textContent = newText.trim() || 'This is the text that will change colors!';
-            }
-        });
-
-        function updateTrackInfo(title, artist) {
-            currentTrackTitle = title || "Untitled Song";
-            currentTrackArtist = artist || "Unknown Artist";
-
-            // 1. Update Post Card Info
-            songArtistInfo.textContent = `▶ ${currentTrackTitle} - ${currentTrackArtist}`;
-            songArtistInfo.style.display = 'block';
-
-            // 2. Update Dynamic Island Expanded Card Info
-            expandedTrackTitle.textContent = currentTrackTitle;
-            expandedTrackArtist.textContent = currentTrackArtist;
-            expandedTrackLabel.textContent = currentTrackArtist;
-        }
-
-        // ===================================
-        // --- EXISTING UTILITY FUNCTIONS ---
-        // ===================================
-
-        // --- YouTube Video Player and Link Loader ---
-        loadVideoBtn.addEventListener('click', () => {
-            const link = youtubeLinkInput.value.trim();
-            if (!link) {
-                alert('Please paste a valid YouTube link.');
-                return;
-            }
-
-            let videoId;
-            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-            const match = link.match(regex);
-
-            if (match && match[1]) {
-                videoId = match[1];
-            } else {
-                videoPlayerDiv.innerHTML = `<p style="color: red;">Invalid YouTube link format.</p>`;
-                return;
-            }
-            
-            // PROMPT FOR SONG INFO
-            const title = prompt("Enter the Song Title:");
-            const artist = prompt("Enter the Artist Name:");
-
-            const iframeHTML = `<iframe width="100%" height="200" 
-                src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" 
-                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen></iframe>`;
                 
-            videoPlayerDiv.innerHTML = iframeHTML;
-            
-            updateTrackInfo(title, artist); 
-            
-            musicActive = true; 
-            islandState = 'shrunk-music';
-            updateIslandClasses();
-        });
-
-
-        // --- Soundwave & Music Control ---
-        function startSoundwave(bars, maxHeight) {
-            if (soundwaveAnimationInterval) {
-                clearInterval(soundwaveAnimationInterval);
+                // Cập nhật màu border và cap
+                batteryShellEl.style.borderColor = iconColor;
+                batteryCapEl.style.backgroundColor = iconColor;
+                updateStatusBarColor(iconColor, false); // Áp dụng màu cho các icon khác
             }
-            
-            if (bars === shrunkSoundwaveBars) {
-                shrunkSoundwaveContainer.style.display = 'flex';
-                expandedSoundwaveContainer.style.display = 'none';
-            } else {
-                shrunkSoundwaveContainer.style.display = 'none';
-                expandedSoundwaveContainer.style.display = 'flex';
-            }
-
-            soundwaveAnimationInterval = setInterval(() => {
-                hue = (hue + 5) % 360; 
-                const baseColor = `hsl(${hue}, 100%, 70%)`;
-                audioDot.style.backgroundColor = baseColor; 
-                
-                // NEW: Update background glow color with every tick
-                updateMusicGlow();
-
-                bars.forEach((bar, index) => {
-                    // *** MODIFIED LINE FOR STRONGER SOUNDWAVES ***
-                    // We use maxHeight * 1.5 to allow bars to stretch beyond the container height for a 'stronger' effect
-                    const randomHeight = Math.floor(Math.random() * (maxHeight * 1.5 - 5)) + 5; 
-                    // **********************************************
-                    
-                    bar.style.height = `${randomHeight}px`;
-                    
-                    const barHue = (hue + (index * 15)) % 360; 
-                    bar.style.backgroundColor = `hsl(${barHue}, 100%, 70%)`;
-                });
-            }, 100);
         }
         
-        function stopSoundwave() {
-            if (soundwaveAnimationInterval) {
-                clearInterval(soundwaveAnimationInterval);
-                soundwaveAnimationInterval = null;
+        // Hàm cập nhật màu cho toàn bộ Status Bar
+        function updateStatusBarColor(color, isRgb = true) {
+            const textColor = isRgb ? color : color;
+            
+            // Cập nhật màu chữ (Time, Percent)
+            timeDisplay.style.color = textColor;
+            batteryPercentEl.style.color = textColor;
+            
+            // Cập nhật màu Icons (Signal, Wifi)
+            wifiIconEl.style.stroke = textColor;
+            signalBars.forEach(bar => bar.style.backgroundColor = textColor);
+            
+            if (isRgb) {
+                // Khi RGB, pin fill luôn màu trắng
+                batteryShellEl.style.borderColor = textColor;
+                batteryCapEl.style.backgroundColor = textColor;
+                batteryFillEl.style.backgroundColor = 'white'; 
+                batteryFillEl.style.animation = 'none'; // Tắt nhấp nháy
+                Object.values(BATTERY_COLORS).forEach(cls => batteryFillEl.classList.remove(cls));
+            } else {
+                // Khi Tĩnh, chỉ cập nhật border/cap/icon, pin fill được quản lý bởi updateBattery
+                const defaultIconColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+                timeDisplay.style.color = defaultIconColor;
+                batteryPercentEl.style.color = defaultIconColor;
+                wifiIconEl.style.stroke = defaultIconColor;
+                signalBars.forEach(bar => bar.style.backgroundColor = defaultIconColor);
+
+                // Update battery shell/cap color based on default text color
+                batteryShellEl.style.borderColor = defaultIconColor;
+                batteryCapEl.style.backgroundColor = defaultIconColor;
             }
-            songArtistInfo.style.display = 'none';
-            musicActive = false;
-            shrunkSoundwaveBars.forEach(bar => bar.style.height = '2px');
-            expandedSoundwaveBars.forEach(bar => bar.style.height = '2px');
-            shrunkSoundwaveContainer.style.display = 'none';
-            expandedSoundwaveContainer.style.display = 'none';
         }
 
+        // --- Logic Dynamic Island (Giữ nguyên) ---
 
-        // --- Music Glow Background Logic ---
+        // Hàm định dạng thời gian
+        function formatTime(totalSeconds) {
+            const sign = totalSeconds < 0 ? '-' : '';
+            const seconds = Math.abs(totalSeconds);
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${sign}${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Cập nhật UI cho bài hát
+        function updateTrackDisplay() {
+            trackTitleExpanded.textContent = currentTrack;
+            trackArtistExpanded.textContent = currentArtist;
+            
+            currentTimeLabel.textContent = formatTime(currentProgressSeconds);
+            const remaining = totalDurationSeconds - currentProgressSeconds;
+            remainingTimeLabel.textContent = formatTime(-remaining);
+            
+            shrunkTimeDisplay.textContent = formatTime(currentProgressSeconds);
+
+            const percent = (currentProgressSeconds / totalDurationSeconds) * 100;
+            progressBarFill.style.width = `${percent}%`;
+        }
+
+        // Quản lý trạng thái Dynamic Island
+        function setIslandState(newState) {
+            islandState = newState;
+            
+            island.classList.remove('island-playing-shrunk', 'island-expanded', 'island-collapsed');
+            musicPlayingShrunkContent.style.display = 'none';
+            musicExpandedPlayer.style.display = 'none';
+            islandNotch.style.opacity = '1';
+            
+            switch (islandState) {
+                case 0: // Collapsed
+                    island.classList.add('island-collapsed');
+                    islandNotch.style.opacity = '1';
+                    stopMusicRgbAndProgress();
+                    break;
+                case 1: // Playing Shrunk
+                    island.classList.add('island-playing-shrunk');
+                    musicPlayingShrunkContent.style.display = 'flex';
+                    islandNotch.style.opacity = '0';
+                    startMusicRgbAndProgress();
+                    break;
+                case 2: // Expanded
+                    island.classList.add('island-expanded');
+                    musicExpandedPlayer.style.display = 'flex';
+                    islandNotch.style.opacity = '0';
+                    startMusicRgbAndProgress();
+                    break;
+            }
+        }
+        
+        // Logic Tiến trình
+        function startProgress() {
+            if (progressInterval) clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                currentProgressSeconds++;
+                if (currentProgressSeconds > totalDurationSeconds) {
+                    currentProgressSeconds = 0; // Loop
+                }
+                updateTrackDisplay();
+            }, 1000);
+            
+            togglePlayPauseLargeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        }
+
+        function stopProgress() {
+            if (progressInterval) clearInterval(progressInterval);
+            progressInterval = null;
+            
+            togglePlayPauseLargeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3v18l12-9-12-9z"/></svg>';
+        }
+
+        // Logic RGB (Đã sửa đổi để bao gồm Status Bar MỚI)
         function updateMusicGlow() {
-            // Create a wide, soft rainbow gradient using the current hue
             const color1 = `hsl(${hue}, 80%, 30%)`;
             const color2 = `hsl(${(hue + 60) % 360}, 80%, 30%)`;
-            const color3 = `hsl(${(hue + 120) % 360}, 80%, 30%)`;
-
-            musicGlowBackground.style.background = `radial-gradient(circle at 50% 50%, ${color1} 0%, ${color2} 50%, ${color3} 100%)`;
+            
+            musicGlowBackground.style.background = `radial-gradient(circle at 50% 50%, ${color1} 0%, ${color2} 100%)`;
         }
         
         function startMusicGlow() {
-            musicGlowBackground.style.filter = 'blur(100px) opacity(0.8)'; // Make it visible
-            updateMusicGlow(); // Initial color set
+            musicGlowBackground.style.filter = 'blur(100px) opacity(0.8)'; 
         }
 
         function stopMusicGlow() {
-            musicGlowBackground.style.filter = 'blur(100px) opacity(0)'; // Fade out
+            musicGlowBackground.style.filter = 'blur(100px) opacity(0)'; 
         }
-
-
-        // --- Profile & Color Logic ---
         
-        // 1. Change Name Function
-        changeNameBtn.addEventListener('click', () => {
-            const newName = prompt('Enter the new name for your Facebook profile:');
+        function startMusicRgbAndProgress() {
+            startProgress();
             
-            if (newName && newName.trim() !== "") {
-                userNameSpan.textContent = newName.trim();
-            } else if (newName !== null) {
-                alert('Name cannot be empty.');
-            }
-        });
-
-        // 2. Avatar File Uploader (Local File Upload)
-        uploadAvatarBtn.addEventListener('click', () => {
-            avatarFileInput.click();
-        });
-
-        avatarFileInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
+            if (headerRgbInterval) return; 
             
-            if (file) {
-                if (!file.type.startsWith('image/')) {
-                    alert('Please select an image file.');
-                    avatarFileInput.value = ''; 
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    avatarImage.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // --- Header RGB Cycle Functions ---
-        function resetHeaderColors() {
-            clearInterval(headerRgbInterval);
-            headerRgbInterval = null;
-            timeDisplay.style.color = 'white'; 
-            updateNameAndTickColors();
-        }
-
-        function updateNameAndTickColors(nameColor, tickColor) {
-            const newNameColor = nameColor || nameColorInput.value;
-            const newTickColor = tickColor || tickColorInput.value;
-
-            userNameSpan.style.color = newNameColor;
-            
-            const svgData = encodeURIComponent(`
-                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
-                    <path fill='${newTickColor}' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/>
-                </svg>
-            `);
-            verifiedTickSpan.style.backgroundImage = `url("data:image/svg+xml,${svgData}")`;
-        }
-
-        function startHeaderRgbCycle() {
-            if (headerRgbInterval) {
-                resetHeaderColors(); 
-                return;
-            }
+            startMusicGlow(); 
 
             let step = 0;
+            
             headerRgbInterval = setInterval(() => {
                 const r = Math.sin(step) * 127 + 128;
                 const g = Math.sin(step + 2) * 127 + 128;
@@ -1004,105 +869,264 @@
                 
                 const rgbString = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
 
-                timeDisplay.style.color = rgbString;
-                updateNameAndTickColors(rgbString, rgbString);
+                // Cập nhật màu Status Bar (Sử dụng hàm mới)
+                updateStatusBarColor(rgbString, true);
+
+                // Cập nhật màu Tick và Soundwave
+                updateNameAndTickColors(rgbString); 
+                
+                document.querySelectorAll('.bar').forEach(bar => bar.style.backgroundColor = rgbString);
+                shrunkTimeDisplay.style.color = rgbString;
+
+                // Cập nhật Glow Background
+                hue = (hue + 5) % 360; 
+                updateMusicGlow();
 
                 step += 0.05; 
             }, 50);
         }
 
-        // --- Event Listeners for Custom Colors and Toggles ---
-        nameColorInput.addEventListener('input', () => {
-            resetHeaderColors();
-            updateNameAndTickColors();
-        });
-        tickColorInput.addEventListener('input', () => {
-            resetHeaderColors();
-            updateNameAndTickColors();
-        });
-        rgbHeaderBtn.addEventListener('click', startHeaderRgbCycle); 
+        function stopMusicRgbAndProgress() {
+            stopProgress();
+            
+            if (headerRgbInterval) {
+                clearInterval(headerRgbInterval);
+                headerRgbInterval = null;
+            }
+            
+            stopMusicGlow(); 
 
-        updateNameAndTickColors(); // Initial call
-
-        // --- Night Mode Toggle ---
-        toggleNightModeBtn.addEventListener('click', () => {
-            isNightMode = !isNightMode;
-            body.classList.toggle('night-mode', isNightMode);
-            toggleNightModeBtn.textContent = isNightMode ? '☀️ Light Mode' : '🌙 Night Mode';
-            resetHeaderColors(); 
+            // Reset màu Status Bar về mặc định tĩnh
+            updateStatusBarColor(null, false);
+            updateBattery(currentBatteryLevel); // Khôi phục lại logic màu pin tĩnh
+            
+            // Reset Soundwave và Tick
+            document.querySelectorAll('.bar').forEach(bar => bar.style.backgroundColor = '#34d399');
+            shrunkTimeDisplay.style.color = '#34d399';
             updateNameAndTickColors();
-        });
-
-        // --- Vietnam Time Display ---
-        function updateVietnamTime() {
-            const options = { 
-                timeZone: 'Asia/Ho_Chi_Minh', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: false 
-            };
-            const vnTime = new Date().toLocaleTimeString('en-US', options);
-            timeDisplay.textContent = vnTime;
         }
 
-        updateVietnamTime();
-        setInterval(updateVietnamTime, 1000); 
+        // ===================================
+        // --- LOGIC GẮN SỰ KIỆN ---
+        // ===================================
 
-        // --- Text Color Manipulation Functions ---
-        function resetText() {
-            clearInterval(rgbInterval); 
-            targetText.innerHTML = targetText.textContent; 
-            targetText.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color'); 
+        // Logic Toggle Dynamic Island (0 <-> 1/2)
+        toggleDynamicTickBtn.addEventListener('click', () => {
+            let newState;
+            if (islandState === 0) {
+                newState = 1; // Bật -> Chế độ Playing Shrunk
+                toggleDynamicTickBtn.textContent = '⏸ Dừng Nhạc & RGB (Đang hoạt động)';
+            } else {
+                newState = 0; // Tắt -> Chế độ Collapsed
+                toggleDynamicTickBtn.textContent = '✅ Bật/Tắt Nhạc & RGB';
+            }
+            setIslandState(newState);
+        });
+        
+        // Click vào Dynamic Island để chuyển trạng thái 1 <-> 2
+        island.addEventListener('click', () => {
+            if (islandState === 1) {
+                setIslandState(2);
+            } else if (islandState === 2) {
+                setIslandState(1);
+            }
+        });
+        
+        // Nút Play/Pause lớn trong trạng thái Expanded
+        togglePlayPauseLargeBtn.addEventListener('click', () => {
+            if (progressInterval) {
+                stopProgress();
+            } else {
+                startProgress();
+            }
+        });
+        
+        // Logic đổi Tên Bài hát/Ca sĩ (Cập nhật để sử dụng hàm updateTrackDisplay)
+        updateTrackInfoBtn.addEventListener('click', () => {
+            const newTrack = prompt('Nhập Tiêu đề Bài hát mới:', currentTrack);
+            const newArtist = prompt('Nhập Tên Ca sĩ mới:', currentArtist);
+            
+            if (newTrack !== null) {
+                currentTrack = newTrack.trim() || "Tiêu Đề Bài Hát Tuyệt Vời";
+            }
+            if (newArtist !== null) {
+                currentArtist = newArtist.trim() || "Trần Duy Bảo";
+            }
+            updateTrackDisplay();
+        });
+
+        // Tải Ảnh Art Nhạc
+        uploadArtBtn.addEventListener('click', () => {
+            artFileInput.click();
+        });
+
+        artFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    albumArtLargeImg.src = e.target.result;
+                    videoArtPlayer.innerHTML = `<img src="${e.target.result}" alt="Video Art" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+                };
+                reader.readAsDataURL(file);
+            } else if (file) {
+                console.error('Vui lòng chọn một tệp hình ảnh hợp lệ cho Art Nhạc/Video.');
+            }
+        });
+        
+        // --- LOGIC CHUNG MÀU SẮC/VĂN BẢN ĐỘNG (Giữ nguyên) ---
+
+        // Cập nhật màu Tên và Tick (Tĩnh hoặc RGB)
+        function updateNameAndTickColors(color) {
+            const defaultNameColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+            if (!globalIntervals['userName']) {
+                userNameSpan.style.color = defaultNameColor;
+            }
+
+            const defaultTickColor = getComputedStyle(document.documentElement).getPropertyValue('--fb-blue').trim();
+            const newColor = color || defaultTickColor; 
+
+            // Cập nhật Tick
+            const svgData = encodeURIComponent(`
+                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+                    <path fill='${newColor}' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/>
+                </svg>
+            `);
+            verifiedTickSpan.style.backgroundImage = `url("data:image/svg+xml,${svgData}")`;
+        }
+        
+        function resetDynamicText(element) {
+            const id = element.id;
+            if (globalIntervals[id]) {
+                clearInterval(globalIntervals[id]);
+                delete globalIntervals[id];
+            }
+            element.innerHTML = element.textContent; 
+            const defaultColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+            element.style.color = defaultColor;
+            if (id === 'userName') { updateNameAndTickColors(); }
         }
 
-        // A. Rainbow Text (Static Gradient)
-        function setRainbowText(element) {
-            resetText();
-            const text = element.textContent;
-            element.innerHTML = [...text].map((char, i) => {
-                const hue = i * (360 / text.length);
-                return `<span style="color: hsl(${hue}, 100%, 50%);">${char}</span>`;
-            }).join('');
-        }
-
-        // B. RGB Cycle Text (Animated)
         function setRgbCycleText(element) {
-            resetText();
+            resetDynamicText(element);
+            const id = element.id;
             let step = 0;
 
-            rgbInterval = setInterval(() => {
-                const text = element.textContent;
-                element.innerHTML = [...text].map((char, i) => {
+            const text = element.textContent;
+            element.innerHTML = [...text].map(char => 
+                `<span style="transition: color 0.1s ease;">${char}</span>`
+            ).join('');
+            
+            const chars = element.querySelectorAll('span');
+
+            globalIntervals[id] = setInterval(() => {
+                chars.forEach((char, i) => {
+                    if (char.textContent.trim() === '') return;
                     const r = Math.sin(0.1 * i + step) * 127 + 128;
                     const g = Math.sin(0.1 * i + step + 2) * 127 + 128;
                     const b = Math.sin(0.1 * i + step + 4) * 127 + 128;
-                    
-                    return `<span style="color: rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)});">${char}</span>`;
-                }).join('');
-                
+                    char.style.color = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+                });
                 step += 0.1; 
             }, 50); 
         }
+        
+        document.getElementById('change-text-btn').addEventListener('click', () => {
+            const newText = prompt('Nhập nội dung mới cho tiêu đề bài viết:');
+            if (newText !== null) {
+                resetDynamicText(targetText); 
+                targetText.textContent = newText.trim() || 'Đây là dòng chữ sẽ thay đổi màu sắc!';
+            }
+        });
+        document.getElementById('change-name-btn').addEventListener('click', () => {
+            const newName = prompt('Nhập tên mới cho hồ sơ Facebook của bạn:');
+            if (newName && newName.trim() !== "") {
+                resetDynamicText(userNameSpan); 
+                userNameSpan.textContent = newName.trim();
+                updateNameAndTickColors();
+            }
+        });
+        
+        document.getElementById('text-rgb-btn').addEventListener('click', () => setRgbCycleText(targetText));
+        document.getElementById('text-reset-btn').addEventListener('click', () => resetDynamicText(targetText));
+        document.getElementById('name-rgb-btn').addEventListener('click', () => setRgbCycleText(userNameSpan));
+        document.getElementById('name-reset-btn').addEventListener('click', () => resetDynamicText(userNameSpan));
+        
+        document.getElementById('upload-avatar-btn').addEventListener('click', () => {
+            document.getElementById('avatar-file-input').click();
+        });
+        document.getElementById('avatar-file-input').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('avatar-image').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
-        // C. Random Color Text (Static Random)
-        function setRandomText(element) {
-            resetText();
-            const text = element.textContent;
+        // Chuyển đổi Chế độ Ban Đêm
+        toggleNightModeBtn.addEventListener('click', () => {
+            isNightMode = !isNightMode;
+            body.classList.toggle('night-mode', isNightMode);
+            toggleNightModeBtn.textContent = isNightMode ? '☀️ Chế độ Ban Ngày' : '🌙 Chế độ Ban Đêm';
             
-            const randomColor = () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            setIslandState(0);
+            
+            // Đặt lại màu Status Bar mặc định
+            updateStatusBarColor(null, false);
+            updateBattery(currentBatteryLevel);
 
-            element.innerHTML = [...text].map((char) => {
-                return `<span style="color: ${randomColor()};">${char}</span>`;
-            }).join('');
+            updateNameAndTickColors();
+            for (const id in globalIntervals) {
+                if (globalIntervals.hasOwnProperty(id)) {
+                    resetDynamicText(document.getElementById(id));
+                }
+            }
+        });
+        
+        // --- LOGIC VIDEO YOUTUBE (Giữ nguyên) ---
+        function getYouTubeId(url) {
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = url.match(regex);
+            return (match && match[1]) ? match[1] : null;
         }
 
-        // Attach Event Listeners to Buttons
-        rainbowBtn.addEventListener('click', () => setRainbowText(targetText));
-        rgbBtn.addEventListener('click', () => setRgbCycleText(targetText));
-        randomBtn.addEventListener('click', () => setRandomText(targetText));
+        function loadVideo() {
+            const url = youtubeLinkInput.value.trim();
+            const videoId = getYouTubeId(url);
 
-        // Initial setup for the Dynamic Island Track info
-        updateTrackInfo(currentTrackTitle, currentTrackArtist);
+            if (videoId) {
+                const iframe = document.createElement('iframe');
+                iframe.setAttribute('allow', 'autoplay; encrypted-media; gyroscope; picture-in-picture');
+                iframe.setAttribute('allowfullscreen', '');
+                iframe.setAttribute('src', `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&showinfo=0&rel=0`);
+                
+                videoPlayer.innerHTML = '';
+                videoPlayer.appendChild(iframe);
+                
+                videoArtPlayer.style.opacity = '0';
+                setTimeout(() => { videoArtPlayer.style.display = 'none'; }, 300); 
+
+                console.log(`Đã tải video ID: ${videoId}`);
+            } else {
+                console.error('Vui lòng nhập liên kết YouTube hợp lệ.');
+                videoArtPlayer.innerHTML = '<span class="video-art-icon">❌</span><p>Liên kết không hợp lệ. Vui lòng thử lại.</p>';
+                videoArtPlayer.style.display = 'flex';
+                videoArtPlayer.style.opacity = '1';
+            }
+        }
+
+        loadVideoBtn.addEventListener('click', loadVideo);
+
+
     </script>
+</body>
+</html>
+```eof
+
+Bạn có muốn tôi giúp gì thêm với các tính năng này không, ví dụ như **thay đổi giao diện Facebook** hay **thêm hiệu ứng rung phản hồi** khi nhấn vào Dynamic Island?
 </body>
 </html>
