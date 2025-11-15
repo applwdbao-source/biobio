@@ -118,7 +118,7 @@
             padding: 0;
         }
         .island-collapsed #island-content {
-            opacity: 1; /* Time and Camera */
+            opacity: 1; 
             padding: 0 15px;
             justify-content: space-between;
         }
@@ -128,10 +128,9 @@
         }
 
 
-        /* --- STATE 2: MUSIC SHRUNK (Slightly Wider Pill with Music Info) --- */
-        /* This state is now what the island defaults to when music is active and NOT expanded */
+        /* --- STATE 2: MUSIC SHRUNK (Wider Pill with Music Info) --- */
         .shrunk-music {
-            width: 250px; /* Wider than standard collapsed for audio status */
+            width: 250px; 
             height: 37px;
             border-radius: 20px;
             padding: 0 10px;
@@ -164,17 +163,17 @@
         #audio-active-dot {
             width: 8px;
             height: 8px;
-            background-color: #8c8c8c; /* Default grey dot */
+            background-color: #8c8c8c; 
             border-radius: 50%;
-            margin-left: auto; /* Push to the right */
+            margin-left: auto; 
         }
 
         /* --- STATE 3: MUSIC EXPANDED (The Full Player) --- */
         .expanded-music {
             width: 350px; 
-            height: 400px; /* Large expanded card height */
+            height: 400px; 
             border-radius: 40px;
-            align-items: flex-start; /* Align content to the top */
+            align-items: flex-start; 
             padding: 15px 15px 25px 15px;
             background: #000;
         }
@@ -222,6 +221,841 @@
         }
         
         .track-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .track-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .track-artist {
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 65%; 
+            background-color: #fff; 
+            border-radius: 2px;
+        }
+        
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* Media Controls */
+        .media-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 5px;
+            transition: opacity 0.2s;
+        }
+        
+        .control-btn:hover {
+            opacity: 0.7;
+        }
+        
+        .play-pause-btn {
+            font-size: 50px;
+        }
+
+        /* Volume/Airplay Controls */
+        .volume-airplay {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 20px;
+            color: #ccc;
+        }
+        
+        /* --- SOUNDWAVE STYLES --- */
+        .soundwave-container {
+            display: flex;
+            align-items: center; 
+            height: 20px; 
+            gap: 2px; 
+            overflow: hidden; 
+            position: relative;
+            width: 40px; 
+            justify-content: center;
+        }
+        
+        #expanded-visualizer.soundwave-container {
+            height: 50px; 
+            width: 100%; 
+            margin-top: auto; 
+            filter: opacity(0.5);
+            justify-content: space-around; 
+        }
+
+        .soundwave-bar {
+            width: 4px; 
+            height: 2px; 
+            background-color: #fff; 
+            border-radius: 1px; 
+            transition: height 0.1s ease-out, background-color 0.1s ease-out; 
+            transform-origin: bottom; 
+        }
+        
+        /* --- FACEBOOK APP STYLING --- */
+
+        .facebook-app {
+            padding-top: 55px; 
+            height: calc(100% - 55px);
+            background-color: var(--bg-color); 
+            transition: background-color 0.3s ease;
+        }
+
+        .fb-header {
+            background-color: var(--header-bg); 
+            padding: 10px 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky; 
+            top: 0;
+            z-index: 5;
+            transition: background-color 0.3s ease;
+        }
+
+        .fb-logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--fb-blue); 
+            text-align: left;
+        }
+
+        .fb-post-card {
+            background-color: var(--card-bg);
+            margin: 10px 0;
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-color); 
+            margin-right: 5px;
+            transition: color 0.3s ease;
+        }
+        
+        .verified-tick {
+            display: inline-block;
+            width: 16px; 
+            height: 16px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231877F2' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/>
+                </svg>");
+            background-size: cover;
+            margin-top: -3px; 
+            margin-left: 2px;
+            flex-shrink: 0; 
+            transition: filter 0.3s ease; 
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #606770; 
+            width: 100%; 
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+        }
+
+        #video-player {
+            background-color: #000;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        #video-player iframe {
+            display: block;
+        }
+
+        #song-artist-info { /* NEW STYLE for Song/Artist */
+            font-size: 14px;
+            color: #606770;
+            margin-top: -5px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        #target-text {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 0;
+            color: var(--text-color); 
+            transition: color 0.3s ease; 
+        }
+
+        .post-actions-bar {
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        .action-btn {
+            background-color: var(--action-btn-bg);
+            color: var(--action-btn-text);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--border-color); 
+        }
+
+        .video-btn, .avatar-btn {
+            background-color: var(--fb-blue);
+            color: white;
+        }
+
+        .video-btn:hover, .avatar-btn:hover {
+            background-color: #166fe5; 
+        }
+
+        #youtube-link-input {
+            flex-grow: 1; 
+            padding: 6px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: 12px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        #name-color-input, #tick-color-input {
+            width: 80px;
+            padding: 4px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+    </style>
+</head>
+<body class=""> 
+    <div class="iphone-container">
+        <div class="iphone-frame">
+            <div class="screen">
+                
+                <div class="dynamic-island-wrapper">
+                    <div id="dynamic-island" class="island-collapsed">
+                        
+                        <div id="island-content">
+                            <span id="vietnam-time">09:41</span>
+                            
+                            <div id="music-shrunk-info" style="display: none;">
+                                <span style="font-size: 14px; margin-right: 5px;">0:08</span>
+                                
+                                <div id="audio-visualizer" class="soundwave-container">
+                                    <div class="soundwave-bar"></div>
+                                    <div class="soundwave-bar"></div>
+                                    <div class="soundwave-bar"></div>
+                                    <div class="soundwave-bar"></div>
+                                    <div class="soundwave-bar"></div>
+                                </div>
+                                <span id="audio-active-dot"></span>
+                            </div>
+
+                            <span style="font-size: 14px;"></span>
+                        </div>
+                        
+                        <div id="music-expanded-card" style="display: none;">
+                            <div class="expanded-card-header">
+                                <span id="expanded-track-label">Media Player</span>
+                                <span id="expanded-card-visualizer-icon">|||</span>
+                            </div>
+
+                            <div class="album-info">
+                                <img id="album-art" src="https://via.placeholder.com/100/551A8B/FFFFFF?text=Album+Art" alt="Album Art">
+                                <div class="track-details">
+                                    <span class="track-title" id="expandedTrackTitle">Song Title</span>
+                                    <span class="track-artist" id="expandedTrackArtist">Artist Name</span>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-bar-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <div class="time-labels">
+                                    <span>2:50</span>
+                                    <span>-0:51</span>
+                                </div>
+                            </div>
+
+                            <div class="media-controls">
+                                <button class="control-btn">⏮</button>
+                                <button class="control-btn play-pause-btn">❚❚</button>
+                                <button class="control-btn">⏭</button>
+                            </div>
+                            
+                            <div class="volume-airplay">
+                                <span>🔈</span>
+                                <span>📶</span>
+                            </div>
+
+                            <div id="expanded-visualizer" class="soundwave-container">
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                                <div class="soundwave-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="facebook-app">
+                    
+                    <div class="fb-header">
+                        <h1 class="fb-logo">facebook</h1>
+                    </div>
+
+                    <div class="fb-post-card">
+                        
+                        <div class="post-header">
+                            <img id="avatar-image" src="https://via.placeholder.com/50/007bff/ffffff?text=TD" alt="User Avatar" class="profile-avatar">
+                            <div class="user-details">
+                                <span class="user-name" id="userName">Trần Duy Bảo</span>
+                                <span class="verified-tick" id="verifiedTick" title="Verified"></span>
+                                <p class="post-time">1 min ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="post-content">
+                            <div id="video-player">
+                                <p>Paste a YouTube link below and press 'Load Video'</p>
+                            </div>
+                            
+                            <p id="song-artist-info" style="display: none;"></p>
+                            
+                            <h3 id="target-text">This is the text that will change colors!</h3>
+                        </div>
+                        
+                        <div class="post-actions-bar">
+                            
+                            <button id="change-text-btn" class="action-btn video-btn">✏️ Change Post Text</button>
+                            
+                            <button id="change-name-btn" class="action-btn avatar-btn">👤 Change Name</button>
+                            <input type="file" id="avatar-file-input" accept="image/*" style="display: none;">
+                            <button id="upload-avatar-btn" class="action-btn avatar-btn">📷 Upload Avatar</button>
+                            
+                            <button id="rgb-header-btn" class="action-btn video-btn">🌈 Cycle Header</button>
+
+                            <div class="color-buttons">
+                                <button id="rainbow-text-btn" class="action-btn">🌈 Rainbow</button>
+                                <button id="rgb-text-btn" class="action-btn">🎨 RGB Cycle</button>
+                                <button id="random-text-btn" class="action-btn">🎲 Random</button>
+                            </div>
+                            
+                            <input type="text" id="youtube-link-input" placeholder="Paste YouTube Link">
+                            <button id="load-video-btn" class="action-btn video-btn">▶ Load Video</button>
+                            
+                            <button id="toggle-night-mode-btn" class="action-btn">🌙 Night Mode</button>
+                            
+                            <div style="width: 100%; display: flex; gap: 8px; margin-top: 5px; align-items: center;">
+                                <label for="name-color-input" style="font-size: 12px; color: var(--text-color);">Name Color:</label>
+                                <input type="color" id="name-color-input" value="#050505">
+                                <label for="tick-color-input" style="font-size: 12px; color: var(--text-color);">Tick Color:</label>
+                                <input type="color" id="tick-color-input" value="#1877f2">
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Element Selection ---
+        const body = document.body;
+        const island = document.getElementById('dynamic-island');
+        const timeDisplay = document.getElementById('vietnam-time');
+        const youtubeLinkInput = document.getElementById('youtube-link-input');
+        const loadVideoBtn = document.getElementById('load-video-btn');
+        const videoPlayerDiv = document.getElementById('video-player');
+        
+        // --- Music Player Specific Elements ---
+        const musicShrunkInfo = document.getElementById('music-shrunk-info');
+        const musicExpandedCard = document.getElementById('music-expanded-card');
+        const audioDot = document.getElementById('audio-active-dot');
+        const expandedTrackTitle = document.getElementById('expandedTrackTitle');
+        const expandedTrackArtist = document.getElementById('expandedTrackArtist');
+        const expandedTrackLabel = document.getElementById('expanded-track-label'); // "Media Player" label
+
+        // NEW Post Card Info
+        const songArtistInfo = document.getElementById('song-artist-info');
+
+        // Soundwave elements
+        const shrunkSoundwaveContainer = document.getElementById('audio-visualizer');
+        const expandedSoundwaveContainer = document.getElementById('expanded-visualizer');
+        let shrunkSoundwaveBars; 
+        let expandedSoundwaveBars; 
+
+
+        // --- Profile Elements ---
+        const changeNameBtn = document.getElementById('change-name-btn'); 
+        const uploadAvatarBtn = document.getElementById('upload-avatar-btn'); 
+        const avatarFileInput = document.getElementById('avatar-file-input'); 
+        const avatarImage = document.getElementById('avatar-image'); 
+        const userNameSpan = document.getElementById('userName'); 
+
+        // --- Text/Color Elements ---
+        const targetText = document.getElementById('target-text');
+        const changeTextBtn = document.getElementById('change-text-btn'); 
+        const rainbowBtn = document.getElementById('rainbow-text-btn');
+        const rgbBtn = document.getElementById('rgb-text-btn');
+        const randomBtn = document.getElementById('random-text-btn');
+        const toggleNightModeBtn = document.getElementById('toggle-night-mode-btn');
+        const rgbHeaderBtn = document.getElementById('rgb-header-btn'); 
+        const verifiedTickSpan = document.getElementById('verifiedTick');
+        const nameColorInput = document.getElementById('name-color-input');
+        const tickColorInput = document.getElementById('tick-color-input');
+
+        // --- State Variables ---
+        let rgbInterval;
+        let headerRgbInterval; 
+        let soundwaveAnimationInterval; 
+        let isNightMode = false;
+        let hue = 0;
+        let musicActive = false; 
+        let islandState = 'collapsed'; 
+        let currentTrackTitle = "Song Title";
+        let currentTrackArtist = "Artist Name";
+
+        // Initialize soundwave bars after the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            shrunkSoundwaveBars = Array.from(shrunkSoundwaveContainer.querySelectorAll('.soundwave-bar'));
+            expandedSoundwaveBars = Array.from(expandedSoundwaveContainer.querySelectorAll('.soundwave-bar'));
+        });
+
+
+        // ===================================
+        // --- DYNAMIC ISLAND 2-STATE LOGIC ---
+        // ===================================
+
+        function updateIslandClasses() {
+            island.classList.remove('island-collapsed', 'shrunk-music', 'expanded-music');
+            island.classList.add(islandState);
+
+            const isMusicPlaying = musicActive;
+
+            if (islandState === 'collapsed') {
+                musicShrunkInfo.style.display = 'none';
+                musicExpandedCard.style.display = 'none';
+                timeDisplay.style.display = 'block'; 
+                stopSoundwave(); 
+
+            } else if (islandState === 'shrunk-music' && isMusicPlaying) {
+                // Small music pill state
+                musicShrunkInfo.style.display = 'flex';
+                musicExpandedCard.style.display = 'none';
+                timeDisplay.style.display = 'block';
+                startSoundwave(shrunkSoundwaveBars, shrunkSoundwaveContainer.clientHeight); 
+
+            } else if (islandState === 'expanded-music' && isMusicPlaying) {
+                // Full player card state
+                musicShrunkInfo.style.display = 'none';
+                musicExpandedCard.style.display = 'flex';
+                timeDisplay.style.display = 'none';
+                startSoundwave(expandedSoundwaveBars, expandedSoundwaveContainer.clientHeight); 
+            
+            } else {
+                islandState = 'collapsed';
+                updateIslandClasses(); 
+            }
+        }
+        
+        island.addEventListener('click', () => {
+            if (!musicActive) {
+                 if (islandState === 'collapsed') {
+                     islandState = 'shrunk-music';
+                 } else {
+                     islandState = 'collapsed';
+                 }
+            } else {
+                if (islandState === 'shrunk-music') {
+                    islandState = 'expanded-music';
+                } else {
+                    islandState = 'shrunk-music';
+                }
+            }
+            updateIslandClasses();
+        });
+
+
+        // ===================================
+        // --- NEW TEXT/TRACK INFO LOGIC ---
+        // ===================================
+
+        changeTextBtn.addEventListener('click', () => {
+            const newText = prompt('Enter the new text for the post title:');
+            
+            if (newText !== null) {
+                resetText(); 
+                targetText.textContent = newText.trim() || 'This is the text that will change colors!';
+            }
+        });
+
+        function updateTrackInfo(title, artist) {
+            currentTrackTitle = title || "Untitled Song";
+            currentTrackArtist = artist || "Unknown Artist";
+
+            // 1. Update Post Card Info
+            songArtistInfo.textContent = `▶ ${currentTrackTitle} - ${currentTrackArtist}`;
+            songArtistInfo.style.display = 'block';
+
+            // 2. Update Dynamic Island Expanded Card Info
+            expandedTrackTitle.textContent = currentTrackTitle;
+            expandedTrackArtist.textContent = currentTrackArtist;
+            expandedTrackLabel.textContent = currentTrackArtist;
+        }
+
+        // ===================================
+        // --- EXISTING UTILITY FUNCTIONS ---
+        // ===================================
+
+        // --- YouTube Video Player and Link Loader ---
+        loadVideoBtn.addEventListener('click', () => {
+            const link = youtubeLinkInput.value.trim();
+            if (!link) {
+                alert('Please paste a valid YouTube link.');
+                return;
+            }
+
+            let videoId;
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = link.match(regex);
+
+            if (match && match[1]) {
+                videoId = match[1];
+            } else {
+                videoPlayerDiv.innerHTML = `<p style="color: red;">Invalid YouTube link format.</p>`;
+                return;
+            }
+            
+            // PROMPT FOR SONG INFO
+            const title = prompt("Enter the Song Title:");
+            const artist = prompt("Enter the Artist Name:");
+
+            const iframeHTML = `<iframe width="100%" height="200" 
+                src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" 
+                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen></iframe>`;
+                
+            videoPlayerDiv.innerHTML = iframeHTML;
+            
+            updateTrackInfo(title, artist); // Update display with new info
+            
+            // Activate music status and switch island to shrunk music mode
+            musicActive = true; 
+            islandState = 'shrunk-music';
+            updateIslandClasses();
+        });
+
+
+        // --- Soundwave & Music Control ---
+        function startSoundwave(bars, maxHeight) {
+            if (soundwaveAnimationInterval) {
+                clearInterval(soundwaveAnimationInterval);
+            }
+            
+            if (bars === shrunkSoundwaveBars) {
+                shrunkSoundwaveContainer.style.display = 'flex';
+                expandedSoundwaveContainer.style.display = 'none';
+            } else {
+                shrunkSoundwaveContainer.style.display = 'none';
+                expandedSoundwaveContainer.style.display = 'flex';
+            }
+
+            soundwaveAnimationInterval = setInterval(() => {
+                hue = (hue + 5) % 360; 
+                const baseColor = `hsl(${hue}, 100%, 70%)`;
+                audioDot.style.backgroundColor = baseColor; 
+
+                bars.forEach((bar, index) => {
+                    // Random height for each bar, relative to the container's height
+                    const randomHeight = Math.floor(Math.random() * (maxHeight * 0.9 - 2)) + 2; 
+                    bar.style.height = `${randomHeight}px`;
+                    
+                    // Simple color variation based on index or position in the bar set
+                    const barHue = (hue + (index * 15)) % 360; 
+                    bar.style.backgroundColor = `hsl(${barHue}, 100%, 70%)`;
+                });
+            }, 100);
+        }
+        
+        function stopSoundwave() {
+            if (soundwaveAnimationInterval) {
+                clearInterval(soundwaveAnimationInterval);
+                soundwaveAnimationInterval = null;
+            }
+            // Reset bar heights and hide containers
+            shrunkSoundwaveBars.forEach(bar => bar.style.height = '2px');
+            expandedSoundwaveBars.forEach(bar => bar.style.height = '2px');
+            shrunkSoundwaveContainer.style.display = 'none';
+            expandedSoundwaveContainer.style.display = 'none';
+        }
+
+        // --- Profile & Color Logic ---
+        
+        // 1. Change Name Function
+        changeNameBtn.addEventListener('click', () => {
+            const newName = prompt('Enter the new name for your Facebook profile:');
+            
+            if (newName && newName.trim() !== "") {
+                userNameSpan.textContent = newName.trim();
+            } else if (newName !== null) {
+                alert('Name cannot be empty.');
+            }
+        });
+
+        // 2. Avatar File Uploader (Local File Upload)
+        uploadAvatarBtn.addEventListener('click', () => {
+            avatarFileInput.click();
+        });
+
+        avatarFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file.');
+                    avatarFileInput.value = ''; 
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    avatarImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // --- Header RGB Cycle Functions ---
+        function resetHeaderColors() {
+            clearInterval(headerRgbInterval);
+            headerRgbInterval = null;
+            timeDisplay.style.color = 'white'; 
+            updateNameAndTickColors();
+        }
+
+        function updateNameAndTickColors(nameColor, tickColor) {
+            const newNameColor = nameColor || nameColorInput.value;
+            const newTickColor = tickColor || tickColorInput.value;
+
+            userNameSpan.style.color = newNameColor;
+            
+            const svgData = encodeURIComponent(`
+                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+                    <path fill='${newTickColor}' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/>
+                </svg>
+            `);
+            verifiedTickSpan.style.backgroundImage = `url("data:image/svg+xml,${svgData}")`;
+        }
+
+        function startHeaderRgbCycle() {
+            if (headerRgbInterval) {
+                resetHeaderColors(); 
+                return;
+            }
+
+            let step = 0;
+            headerRgbInterval = setInterval(() => {
+                const r = Math.sin(step) * 127 + 128;
+                const g = Math.sin(step + 2) * 127 + 128;
+                const b = Math.sin(step + 4) * 127 + 128;
+                
+                const rgbString = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+
+                timeDisplay.style.color = rgbString;
+                updateNameAndTickColors(rgbString, rgbString);
+
+                step += 0.05; 
+            }, 50);
+        }
+
+        // --- Event Listeners for Custom Colors and Toggles ---
+        nameColorInput.addEventListener('input', () => {
+            resetHeaderColors();
+            updateNameAndTickColors();
+        });
+        tickColorInput.addEventListener('input', () => {
+            resetHeaderColors();
+            updateNameAndTickColors();
+        });
+        rgbHeaderBtn.addEventListener('click', startHeaderRgbCycle); 
+
+        updateNameAndTickColors(); // Initial call
+
+        // --- Night Mode Toggle ---
+        toggleNightModeBtn.addEventListener('click', () => {
+            isNightMode = !isNightMode;
+            body.classList.toggle('night-mode', isNightMode);
+            toggleNightModeBtn.textContent = isNightMode ? '☀️ Light Mode' : '🌙 Night Mode';
+            resetHeaderColors(); 
+            updateNameAndTickColors();
+        });
+
+        // --- Vietnam Time Display ---
+        function updateVietnamTime() {
+            const options = { 
+                timeZone: 'Asia/Ho_Chi_Minh', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: false 
+            };
+            const vnTime = new Date().toLocaleTimeString('en-US', options);
+            timeDisplay.textContent = vnTime;
+        }
+
+        updateVietnamTime();
+        setInterval(updateVietnamTime, 1000); 
+
+        // --- Text Color Manipulation Functions ---
+        function resetText() {
+            clearInterval(rgbInterval); 
+            targetText.innerHTML = targetText.textContent; 
+            targetText.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color'); 
+        }
+
+        // A. Rainbow Text (Static Gradient)
+        function setRainbowText(element) {
+            resetText();
+            const text = element.textContent;
+            element.innerHTML = [...text].map((char, i) => {
+                const hue = i * (360 / text.length);
+                return `<span style="color: hsl(${hue}, 100%, 50%);">${char}</span>`;
+            }).join('');
+        }
+
+        // B. RGB Cycle Text (Animated)
+        function setRgbCycleText(element) {
+            resetText();
+            let step = 0;
+
+            rgbInterval = setInterval(() => {
+                const text = element.textContent;
+                element.innerHTML = [...text].map((char, i) => {
+                    const r = Math.sin(0.1 * i + step) * 127 + 128;
+                    const g = Math.sin(0.1 * i + step + 2) * 127 + 128;
+                    const b = Math.sin(0.1 * i + step + 4) * 127 + 128;
+                    
+                    return `<span style="color: rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)});">${char}</span>`;
+                }).join('');
+                
+                step += 0.1; 
+            }, 50); 
+        }
+
+        // C. Random Color Text (Static Random)
+        function setRandomText(element) {
+            resetText();
+            const text = element.textContent;
+            
+            const randomColor = () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+
+            element.innerHTML = [...text].map((char) => {
+                return `<span style="color: ${randomColor()};">${char}</span>`;
+            }).join('');
+        }
+
+        // Attach Event Listeners to Buttons
+        rainbowBtn.addEventListener('click', () => setRainbowText(targetText));
+        rgbBtn.addEventListener('click', () => setRgbCycleText(targetText));
+        randomBtn.addEventListener('click', () => setRandomText(targetText));
+
+        // Initial setup for the Dynamic Island Track info
+        updateTrackInfo(currentTrackTitle, currentTrackArtist);
+    </script>
+</body>
+</html>        .track-details {
             display: flex;
             flex-direction: column;
             justify-content: center;
