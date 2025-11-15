@@ -105,6 +105,11 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
 
+        #vietnam-time {
+            /* Ensure the clock starts white, ready for color change */
+            color: white; 
+        }
+
         .island-collapsed {
             width: 120px;
             height: 32px;
@@ -142,7 +147,7 @@
         }
         .simulated-soundwave {
             animation: pulse 1s infinite alternate;
-            background-image: linear-gradient(to right, #007bff, #1877f2, #007bff);
+            /* Default gradient set via JS now */
         }
 
         /* --- FACEBOOK APP STYLING --- */
@@ -204,7 +209,7 @@
         .user-name {
             font-weight: 700;
             font-size: 14px;
-            color: var(--text-color); /* Uses theme text color */
+            color: var(--text-color); /* Uses theme text color by default */
             margin-right: 5px;
             transition: color 0.3s ease;
         }
@@ -212,19 +217,19 @@
         /* New styling for the verified tick using SVG for accuracy */
         .verified-tick {
             display: inline-block;
-            width: 16px; /* Size of the tick image */
+            width: 16px; 
             height: 16px;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231877F2' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/%3E%3C/svg%3E");
             background-size: cover;
-            margin-top: -3px; /* Align vertically */
+            margin-top: -3px; 
             margin-left: 2px;
-            flex-shrink: 0; /* Prevent it from shrinking */
-            transition: filter 0.3s ease; /* For changing SVG color */
+            flex-shrink: 0; 
+            transition: filter 0.3s ease; 
         }
 
         .post-time {
             font-size: 12px;
-            color: #606770; /* This can remain constant or change */
+            color: #606770; 
             width: 100%; 
         }
 
@@ -251,7 +256,7 @@
             font-size: 18px;
             font-weight: bold;
             padding: 10px 0;
-            color: var(--text-color); /* Uses theme text color */
+            color: var(--text-color); 
             transition: color 0.3s ease; 
         }
 
@@ -276,7 +281,7 @@
         }
 
         .action-btn:hover {
-            background-color: var(--border-color); /* Lighter hover in light, darker in dark */
+            background-color: var(--border-color); 
         }
 
         .video-btn, .avatar-btn {
@@ -285,7 +290,7 @@
         }
 
         .video-btn:hover, .avatar-btn:hover {
-            background-color: #166fe5; /* Slightly darker blue */
+            background-color: #166fe5; 
         }
 
         #youtube-link-input {
@@ -310,7 +315,8 @@
 
     </style>
 </head>
-<body class=""> <div class="iphone-container">
+<body class=""> 
+    <div class="iphone-container">
         <div class="iphone-frame">
             <div class="screen">
                 
@@ -349,6 +355,8 @@
                         
                         <div class="post-actions-bar">
                             
+                            <button id="rgb-header-btn" class="action-btn video-btn">🌈 Cycle Header</button>
+
                             <div class="color-buttons">
                                 <button id="rainbow-text-btn" class="action-btn">🌈 Rainbow</button>
                                 <button id="rgb-text-btn" class="action-btn">🎨 RGB Cycle</button>
@@ -382,7 +390,6 @@
         const body = document.body;
         const island = document.getElementById('dynamic-island');
         const timeDisplay = document.getElementById('vietnam-time');
-        const islandContent = document.getElementById('island-content');
         const visualizerCanvas = document.getElementById('audio-visualizer');
         const youtubeLinkInput = document.getElementById('youtube-link-input');
         const loadVideoBtn = document.getElementById('load-video-btn');
@@ -394,30 +401,38 @@
         const rgbBtn = document.getElementById('rgb-text-btn');
         const randomBtn = document.getElementById('random-text-btn');
         const toggleNightModeBtn = document.getElementById('toggle-night-mode-btn');
+        const rgbHeaderBtn = document.getElementById('rgb-header-btn'); // NEW
         const userNameSpan = document.getElementById('userName');
         const verifiedTickSpan = document.getElementById('verifiedTick');
         const nameColorInput = document.getElementById('name-color-input');
         const tickColorInput = document.getElementById('tick-color-input');
 
+        let rgbInterval;
+        let headerRgbInterval; // NEW interval for header elements
+        let soundwaveColorInterval;
+        let isNightMode = false;
+        let hue = 0;
 
-        let rgbInterval; 
-        let isNightMode = false; // State for night mode
+        // --- Utility Functions ---
 
-        // --- Night Mode Toggle ---
-        toggleNightModeBtn.addEventListener('click', () => {
-            isNightMode = !isNightMode;
-            body.classList.toggle('night-mode', isNightMode);
-            toggleNightModeBtn.textContent = isNightMode ? '☀️ Light Mode' : '🌙 Night Mode';
-            
-            // Reapply current name/tick colors in case theme changes how they look
+        // Helper to reset the default header/profile colors
+        function resetHeaderColors() {
+            clearInterval(headerRgbInterval);
+            headerRgbInterval = null;
+            // Reset to the color values from the input fields
+            timeDisplay.style.color = 'white'; 
             updateNameAndTickColors();
-        });
+        }
 
-        // --- Custom Name and Tick Color Update ---
-        function updateNameAndTickColors() {
-            userNameSpan.style.color = nameColorInput.value;
-            // For SVG background, we need to recreate it with the new color
-            const newTickColor = tickColorInput.value;
+        // --- Custom Name and Tick Color Update (Used for inputs AND RGB cycle) ---
+        function updateNameAndTickColors(nameColor, tickColor) {
+            // Use provided colors, or fall back to input values if none provided (i.e., when inputs are used)
+            const newNameColor = nameColor || nameColorInput.value;
+            const newTickColor = tickColor || tickColorInput.value;
+
+            userNameSpan.style.color = newNameColor;
+            
+            // Recreate SVG background with the new tick color
             const svgData = encodeURIComponent(`
                 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
                     <path fill='${newTickColor}' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/>
@@ -426,16 +441,77 @@
             verifiedTickSpan.style.backgroundImage = `url("data:image/svg+xml,${svgData}")`;
         }
 
-        nameColorInput.addEventListener('input', updateNameAndTickColors);
-        tickColorInput.addEventListener('input', updateNameAndTickColors);
+        // --- Header RGB Cycle Logic (NEW) ---
+        function startHeaderRgbCycle() {
+            if (headerRgbInterval) {
+                resetHeaderColors(); // Stop if already running
+                return;
+            }
 
-        // Initial call to set default colors
-        updateNameAndTickColors();
+            let step = 0;
+            headerRgbInterval = setInterval(() => {
+                const r = Math.sin(step) * 127 + 128;
+                const g = Math.sin(step + 2) * 127 + 128;
+                const b = Math.sin(step + 4) * 127 + 128;
+                
+                const rgbString = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
 
-        // --- Dynamic Island Collapse/Expand Toggle ---
+                // Apply to clock
+                timeDisplay.style.color = rgbString;
+                
+                // Apply to name and tick
+                updateNameAndTickColors(rgbString, rgbString);
+
+                step += 0.05; // Control animation speed
+            }, 50);
+        }
+
+        // --- Event Listeners for Custom Colors and Toggles ---
+        nameColorInput.addEventListener('input', () => {
+            resetHeaderColors();
+            updateNameAndTickColors();
+        });
+        tickColorInput.addEventListener('input', () => {
+            resetHeaderColors();
+            updateNameAndTickColors();
+        });
+        rgbHeaderBtn.addEventListener('click', startHeaderRgbCycle); // NEW Button Listener
+
+        updateNameAndTickColors(); // Initial call
+
+        // --- Night Mode Toggle ---
+        toggleNightModeBtn.addEventListener('click', () => {
+            isNightMode = !isNightMode;
+            body.classList.toggle('night-mode', isNightMode);
+            toggleNightModeBtn.textContent = isNightMode ? '☀️ Light Mode' : '🌙 Night Mode';
+            resetHeaderColors(); // Stop header cycle when toggling theme
+            updateNameAndTickColors();
+        });
+
+        // --- Dynamic Island Logic (Soundwave Color & Toggle) ---
+        function updateSoundwaveColor() {
+            hue = (hue + 2) % 360; 
+            const color1 = `hsl(${hue}, 100%, 50%)`;
+            const color2 = `hsl(${(hue + 60) % 360}, 100%, 50%)`; 
+            const color3 = `hsl(${(hue + 120) % 360}, 100%, 50%)`; 
+
+            visualizerCanvas.style.backgroundImage = `linear-gradient(to right, ${color1}, ${color2}, ${color3}, ${color2}, ${color1})`;
+        }
+
         function startSimulatedSoundwave() {
             visualizerCanvas.style.display = 'block'; 
             visualizerCanvas.classList.add('simulated-soundwave');
+            
+            if (!soundwaveColorInterval) {
+                soundwaveColorInterval = setInterval(updateSoundwaveColor, 100); 
+            }
+        }
+        
+        function stopSimulatedSoundwave() {
+            clearInterval(soundwaveColorInterval);
+            soundwaveColorInterval = null;
+            visualizerCanvas.classList.remove('simulated-soundwave');
+            visualizerCanvas.style.display = 'none';
         }
 
         island.addEventListener('click', () => {
@@ -450,8 +526,7 @@
                     startSimulatedSoundwave();
                 }
             } else {
-                visualizerCanvas.style.display = 'none';
-                visualizerCanvas.classList.remove('simulated-soundwave');
+                stopSimulatedSoundwave();
             }
         });
 
@@ -495,7 +570,10 @@
                 allowfullscreen></iframe>`;
                 
             videoPlayerDiv.innerHTML = iframeHTML;
-            startSimulatedSoundwave(); 
+            
+            if (island.classList.contains('island-expanded')) {
+                startSimulatedSoundwave(); 
+            }
         });
 
         // --- Avatar Changer ---
@@ -508,7 +586,6 @@
         });
 
         // --- Text Color Manipulation Functions ---
-
         function resetText() {
             clearInterval(rgbInterval); 
             targetText.innerHTML = targetText.textContent; 
@@ -561,5 +638,7 @@
         rgbBtn.addEventListener('click', () => setRgbCycleText(targetText));
         randomBtn.addEventListener('click', () => setRandomText(targetText));
     </script>
+</body>
+</html>
 </body>
 </html>
