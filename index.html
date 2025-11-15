@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApplwNgoo Iphone</title>
+    <title>Trần Duy Bảo's Dynamic FB</title>
     
     <style>
         /* CSS Variables for theming */
@@ -103,43 +103,217 @@
             transition: all 0.3s ease-in-out; 
             cursor: pointer;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            overflow: hidden; /* Hide overflow content when collapsed */
         }
 
         #vietnam-time {
-            /* Ensure the clock starts white, ready for color change */
             color: white; 
+            transition: all 0.3s;
         }
-
+        
+        /* --- STATE 1: IDLE --- */
         .island-collapsed {
             width: 120px;
             height: 32px;
+            padding: 0;
         }
-        
-        .island-expanded {
-            width: 350px; 
-            height: 90px;
-            border-radius: 40px;
+        .island-collapsed #island-content {
+            opacity: 1; /* Time and Camera */
+            padding: 0 15px;
+            justify-content: space-between;
+        }
+        .island-collapsed #music-shrunk-info, 
+        .island-collapsed #music-expanded-card {
+            display: none;
         }
 
-        #island-content {
+
+        /* --- STATE 2: MUSIC SHRUNK --- */
+        .shrunk-music {
+            width: 250px; /* Slightly wider than standard collapsed */
+            height: 37px;
+            border-radius: 20px;
+            padding: 0 10px;
+            justify-content: flex-start;
+        }
+
+        .shrunk-music #island-content {
+            padding: 0;
+            opacity: 1;
+            justify-content: flex-start;
+            gap: 12px;
+        }
+
+        .shrunk-music #vietnam-time {
+            display: block !important;
+            opacity: 1;
+            width: auto;
+        }
+        
+        .shrunk-music #music-shrunk-info {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            padding: 0 8px;
-            width: 100%;
-            justify-content: space-between;
-            transition: opacity 0.3s ease;
-        }
-
-        #audio-visualizer {
-            display: none; 
-            width: 100px; 
-            height: 50px;
-            border-radius: 10px;
-            background: #1a1a1a;
+            gap: 10px;
         }
         
+        .shrunk-music #music-expanded-card {
+            display: none;
+        }
+        
+        #audio-active-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #8c8c8c; /* Default grey dot */
+            border-radius: 50%;
+            margin-left: auto; /* Push to the right */
+        }
+
+        /* --- STATE 3: MUSIC EXPANDED (The Full Player) --- */
+        .expanded-music {
+            width: 350px; 
+            height: 400px; /* Large expanded card height */
+            border-radius: 40px;
+            align-items: flex-start; /* Align content to the top */
+            padding: 15px 15px 25px 15px;
+            background: #000;
+        }
+        
+        .expanded-music #island-content {
+            display: none; /* Hide the simple time/visualizer wrapper */
+        }
+        
+        .expanded-music #music-expanded-card {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .expanded-music #vietnam-time {
+            display: none;
+        }
+        
+        /* Expanded Card Header (Top Bar) */
+        .expanded-card-header {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        /* Album Art and Details */
+        .album-info {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        #album-art {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .track-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .track-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .track-artist {
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 65%; /* Simulated current position */
+            background-color: #fff; /* White progress */
+            border-radius: 2px;
+        }
+        
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* Media Controls */
+        .media-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 5px;
+            transition: opacity 0.2s;
+        }
+        
+        .control-btn:hover {
+            opacity: 0.7;
+        }
+        
+        .play-pause-btn {
+            font-size: 50px;
+        }
+
+        /* Volume/Airplay Controls */
+        .volume-airplay {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 20px;
+            color: #ccc;
+        }
+        
+        /* The Music Visualizer in the Expanded State */
+        #expanded-visualizer {
+            width: 100%;
+            height: 50px; /* Reduced height for bottom placement */
+            border-radius: 0;
+            background: transparent;
+            margin-top: auto; /* Push to the bottom */
+            filter: opacity(0.5);
+        }
+
+        /* Soundwave Styling (reused) */
         @keyframes pulse {
             0% { transform: scaleY(1); opacity: 0.8; }
             50% { transform: scaleY(1.2); opacity: 1; }
@@ -149,8 +323,8 @@
             animation: pulse 1s infinite alternate;
             /* Gradient set via JS */
         }
-
-        /* --- FACEBOOK APP STYLING --- */
+        
+        /* --- FACEBOOK APP STYLING --- (Unchanged for FB functionality) */
 
         .facebook-app {
             padding-top: 55px; 
@@ -214,7 +388,6 @@
             transition: color 0.3s ease;
         }
         
-        /* New styling for the verified tick using SVG for accuracy */
         .verified-tick {
             display: inline-block;
             width: 16px; 
@@ -322,9 +495,55 @@
                 
                 <div class="dynamic-island-wrapper">
                     <div id="dynamic-island" class="island-collapsed">
+                        
                         <div id="island-content">
-                            <span id="vietnam-time">10:09</span>
-                            <canvas id="audio-visualizer"></canvas> 
+                            <span id="vietnam-time">09:41</span>
+                            
+                            <div id="music-shrunk-info" style="display: none;">
+                                <span style="font-size: 14px; margin-right: 5px;">0:08</span>
+                                <canvas id="audio-visualizer"></canvas> 
+                                <span id="audio-active-dot"></span>
+                            </div>
+
+                            <span style="font-size: 14px;"></span>
+                        </div>
+                        
+                        <div id="music-expanded-card" style="display: none;">
+                            <div class="expanded-card-header">
+                                <span>Entropy</span>
+                                <span id="expanded-card-visualizer-icon">|||</span>
+                            </div>
+
+                            <div class="album-info">
+                                <img id="album-art" src="https://via.placeholder.com/100/551A8B/FFFFFF?text=Album+Art" alt="Album Art">
+                                <div class="track-details">
+                                    <span class="track-title">Entropy</span>
+                                    <span class="track-artist">Beach Bunny</span>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-bar-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <div class="time-labels">
+                                    <span>2:50</span>
+                                    <span>-0:51</span>
+                                </div>
+                            </div>
+
+                            <div class="media-controls">
+                                <button class="control-btn">⏮</button>
+                                <button class="control-btn play-pause-btn">❚❚</button>
+                                <button class="control-btn">⏭</button>
+                            </div>
+                            
+                            <div class="volume-airplay">
+                                <span>🔈</span>
+                                <span>📶</span>
+                            </div>
+
+                            <canvas id="expanded-visualizer" class="simulated-soundwave"></canvas>
                         </div>
                     </div>
                 </div>
@@ -340,7 +559,7 @@
                         <div class="post-header">
                             <img id="avatar-image" src="https://via.placeholder.com/50/007bff/ffffff?text=TD" alt="User Avatar" class="profile-avatar">
                             <div class="user-details">
-                                <span class="user-name" id="userName">ApplwNgoo</span>
+                                <span class="user-name" id="userName">Trần Duy Bảo</span>
                                 <span class="verified-tick" id="verifiedTick" title="Verified"></span>
                                 <p class="post-time">1 min ago</p>
                             </div>
@@ -350,20 +569,20 @@
                             <div id="video-player">
                                 <p>Paste a YouTube link below and press 'Load Video'</p>
                             </div>
-                            <h3 id="target-text">Iphone của bạn!</h3>
+                            <h3 id="target-text">This is the text that will change colors!</h3>
                         </div>
                         
                         <div class="post-actions-bar">
                             
-                            <button id="change-name-btn" class="action-btn avatar-btn">👤 Đổi tên FB</button>
+                            <button id="change-name-btn" class="action-btn avatar-btn">👤 Change Name</button>
                             <input type="file" id="avatar-file-input" accept="image/*" style="display: none;">
-                            <button id="upload-avatar-btn" class="action-btn avatar-btn">📷 Đổi Avatar</button>
+                            <button id="upload-avatar-btn" class="action-btn avatar-btn">📷 Upload Avatar</button>
                             
-                            <button id="rgb-header-btn" class="action-btn video-btn">🌈 Tên Rainbow</button>
+                            <button id="rgb-header-btn" class="action-btn video-btn">🌈 Cycle Header</button>
 
                             <div class="color-buttons">
                                 <button id="rainbow-text-btn" class="action-btn">🌈 Rainbow</button>
-                                <button id="rgb-text-btn" class="action-btn">🎨 RGB </button>
+                                <button id="rgb-text-btn" class="action-btn">🎨 RGB Cycle</button>
                                 <button id="random-text-btn" class="action-btn">🎲 Random</button>
                             </div>
                             
@@ -373,9 +592,9 @@
                             <button id="toggle-night-mode-btn" class="action-btn">🌙 Night Mode</button>
                             
                             <div style="width: 100%; display: flex; gap: 8px; margin-top: 5px; align-items: center;">
-                                <label for="name-color-input" style="font-size: 12px; color: var(--text-color);">Màu tên:</label>
+                                <label for="name-color-input" style="font-size: 12px; color: var(--text-color);">Name Color:</label>
                                 <input type="color" id="name-color-input" value="#050505">
-                                <label for="tick-color-input" style="font-size: 12px; color: var(--text-color);">Màu tick:</label>
+                                <label for="tick-color-input" style="font-size: 12px; color: var(--text-color);">Tick Color:</label>
                                 <input type="color" id="tick-color-input" value="#1877f2">
                             </div>
                         </div>
@@ -398,12 +617,19 @@
         const loadVideoBtn = document.getElementById('load-video-btn');
         const videoPlayerDiv = document.getElementById('video-player');
         
-        // --- NEW/UPDATED Elements ---
-        const changeNameBtn = document.getElementById('change-name-btn'); // NEW
-        const uploadAvatarBtn = document.getElementById('upload-avatar-btn'); // NEW
-        const avatarFileInput = document.getElementById('avatar-file-input'); // NEW
-        const avatarImage = document.getElementById('avatar-image'); // Existing element
-        const userNameSpan = document.getElementById('userName'); // Existing element
+        // --- Music Player Specific Elements (NEW) ---
+        const musicShrunkInfo = document.getElementById('music-shrunk-info');
+        const musicExpandedCard = document.getElementById('music-expanded-card');
+        const expandedVisualizer = document.getElementById('expanded-visualizer');
+        const audioDot = document.getElementById('audio-active-dot');
+
+
+        // --- Profile Elements ---
+        const changeNameBtn = document.getElementById('change-name-btn'); 
+        const uploadAvatarBtn = document.getElementById('upload-avatar-btn'); 
+        const avatarFileInput = document.getElementById('avatar-file-input'); 
+        const avatarImage = document.getElementById('avatar-image'); 
+        const userNameSpan = document.getElementById('userName'); 
 
         // --- Color Elements ---
         const targetText = document.getElementById('target-text');
@@ -422,12 +648,139 @@
         let soundwaveColorInterval;
         let isNightMode = false;
         let hue = 0;
+        let musicActive = false; // Flag to indicate if music is currently "playing"
+        let islandState = 'collapsed'; // 'collapsed', 'shrunk-music', 'expanded-music'
+
+        // ===================================
+        // --- DYNAMIC ISLAND 3-STATE LOGIC ---
+        // ===================================
+
+        function updateIslandClasses() {
+            // Remove all custom state classes
+            island.classList.remove('island-collapsed', 'shrunk-music', 'expanded-music');
+            
+            // Set the appropriate class based on the current state
+            island.classList.add(islandState);
+
+            // Toggle visibility of content divs
+            const isMusicActive = musicActive; // Check if video is loaded
+
+            if (islandState === 'collapsed') {
+                musicShrunkInfo.style.display = 'none';
+                musicExpandedCard.style.display = 'none';
+                timeDisplay.style.display = 'block'; // Time visible in Idle state
+                stopSoundwave();
+            } else if (islandState === 'shrunk-music' && isMusicActive) {
+                musicShrunkInfo.style.display = 'flex';
+                musicExpandedCard.style.display = 'none';
+                timeDisplay.style.display = 'block';
+                startSoundwave(visualizerCanvas); // Start waveform on the small visualizer
+            } else if (islandState === 'expanded-music' && isMusicActive) {
+                musicShrunkInfo.style.display = 'none';
+                musicExpandedCard.style.display = 'flex';
+                timeDisplay.style.display = 'none';
+                startSoundwave(expandedVisualizer); // Start waveform on the large visualizer
+            } else {
+                // If music is NOT active, revert to idle/collapsed view
+                islandState = 'collapsed';
+                updateIslandClasses(); 
+            }
+        }
+        
+        island.addEventListener('click', () => {
+            if (!musicActive) {
+                 // Simple toggle between collapsed/expanded (like the old state) if no music is active
+                 if (islandState === 'collapsed') {
+                     islandState = 'shrunk-music'; // Use 'shrunk-music' as a stand-in for general expansion
+                 } else {
+                     islandState = 'collapsed';
+                 }
+            } else {
+                // Music is active, cycle through 3 states: shrunk -> expanded -> collapsed
+                if (islandState === 'collapsed') {
+                    islandState = 'shrunk-music';
+                } else if (islandState === 'shrunk-music') {
+                    islandState = 'expanded-music';
+                } else {
+                    islandState = 'collapsed';
+                }
+            }
+            updateIslandClasses();
+        });
+
+        // ===================================
+        // --- SOUNDWAVE & MUSIC CONTROL ---
+        // ===================================
+
+        function updateSoundwaveColor() {
+            hue = (hue + 2) % 360; 
+            const color1 = `hsl(${hue}, 100%, 50%)`;
+            const color2 = `hsl(${(hue + 60) % 360}, 100%, 50%)`; 
+            const color3 = `hsl(${(hue + 120) % 360}, 100%, 50%)`; 
+
+            const gradient = `linear-gradient(to right, ${color1}, ${color2}, ${color3}, ${color2}, ${color1})`;
+            
+            // Apply gradient to BOTH visualizer elements (only one is visible at a time)
+            visualizerCanvas.style.backgroundImage = gradient;
+            expandedVisualizer.style.backgroundImage = gradient;
+            audioDot.style.backgroundColor = color1; // Use the first color for the active dot
+        }
+
+        function startSoundwave(targetCanvas) {
+            targetCanvas.style.display = 'block'; 
+            targetCanvas.classList.add('simulated-soundwave');
+            
+            if (!soundwaveColorInterval) {
+                soundwaveColorInterval = setInterval(updateSoundwaveColor, 100); 
+            }
+        }
+        
+        function stopSoundwave() {
+            clearInterval(soundwaveColorInterval);
+            soundwaveColorInterval = null;
+            visualizerCanvas.classList.remove('simulated-soundwave');
+            expandedVisualizer.classList.remove('simulated-soundwave');
+            visualizerCanvas.style.display = 'none';
+            expandedVisualizer.style.display = 'none';
+        }
+
+        // --- YouTube Video Player and Link Loader ---
+        loadVideoBtn.addEventListener('click', () => {
+            const link = youtubeLinkInput.value.trim();
+            if (!link) {
+                alert('Please paste a valid YouTube link.');
+                return;
+            }
+
+            let videoId;
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = link.match(regex);
+
+            if (match && match[1]) {
+                videoId = match[1];
+            } else {
+                videoPlayerDiv.innerHTML = `<p style="color: red;">Invalid YouTube link format.</p>`;
+                return;
+            }
+
+            const iframeHTML = `<iframe width="100%" height="200" 
+                src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" 
+                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen></iframe>`;
+                
+            videoPlayerDiv.innerHTML = iframeHTML;
+            
+            // Activate music status and switch island to shrunk mode
+            musicActive = true; 
+            islandState = 'shrunk-music';
+            updateIslandClasses();
+        });
 
 
         // ===================================
-        // --- NEW NAME AND AVATAR LOGIC ---
+        // --- PROFILE & COLOR LOGIC ---
         // ===================================
-
+        
         // 1. Change Name Function
         changeNameBtn.addEventListener('click', () => {
             const newName = prompt('Enter the new name for your Facebook profile:');
@@ -441,7 +794,6 @@
 
         // 2. Avatar File Uploader (Local File Upload)
         uploadAvatarBtn.addEventListener('click', () => {
-            // Programmatically click the hidden file input
             avatarFileInput.click();
         });
 
@@ -449,30 +801,18 @@
             const file = event.target.files[0];
             
             if (file) {
-                // Check if the file is an image
                 if (!file.type.startsWith('image/')) {
                     alert('Please select an image file.');
-                    // Clear the file input
                     avatarFileInput.value = ''; 
                     return;
                 }
-
-                // FileReader reads the contents of the file
                 const reader = new FileReader();
-                
                 reader.onload = (e) => {
-                    // e.target.result contains the data URL (base64)
                     avatarImage.src = e.target.result;
                 };
-                
-                // Read the file as a Data URL
                 reader.readAsDataURL(file);
             }
         });
-
-        // ===================================
-        // --- EXISTING COLOR/THEME LOGIC ---
-        // ===================================
 
         // --- Utility Functions ---
         function resetHeaderColors() {
@@ -482,7 +822,7 @@
             updateNameAndTickColors();
         }
 
-        // --- Custom Name and Tick Color Update (Used for inputs AND RGB cycle) ---
+        // --- Custom Name and Tick Color Update ---
         function updateNameAndTickColors(nameColor, tickColor) {
             const newNameColor = nameColor || nameColorInput.value;
             const newTickColor = tickColor || tickColorInput.value;
@@ -542,48 +882,6 @@
             updateNameAndTickColors();
         });
 
-        // --- Dynamic Island Logic (Soundwave Color & Toggle) ---
-        function updateSoundwaveColor() {
-            hue = (hue + 2) % 360; 
-            const color1 = `hsl(${hue}, 100%, 50%)`;
-            const color2 = `hsl(${(hue + 60) % 360}, 100%, 50%)`; 
-            const color3 = `hsl(${(hue + 120) % 360}, 100%, 50%)`; 
-
-            visualizerCanvas.style.backgroundImage = `linear-gradient(to right, ${color1}, ${color2}, ${color3}, ${color2}, ${color1})`;
-        }
-
-        function startSimulatedSoundwave() {
-            visualizerCanvas.style.display = 'block'; 
-            visualizerCanvas.classList.add('simulated-soundwave');
-            
-            if (!soundwaveColorInterval) {
-                soundwaveColorInterval = setInterval(updateSoundwaveColor, 100); 
-            }
-        }
-        
-        function stopSimulatedSoundwave() {
-            clearInterval(soundwaveColorInterval);
-            soundwaveColorInterval = null;
-            visualizerCanvas.classList.remove('simulated-soundwave');
-            visualizerCanvas.style.display = 'none';
-        }
-
-        island.addEventListener('click', () => {
-            island.classList.toggle('island-collapsed');
-            island.classList.toggle('island-expanded');
-            
-            const isExpanded = island.classList.contains('island-expanded');
-            
-            if (isExpanded) {
-                timeDisplay.style.display = 'block';
-                if (videoPlayerDiv.querySelector('iframe')) {
-                    startSimulatedSoundwave();
-                }
-            } else {
-                stopSimulatedSoundwave();
-            }
-        });
-
         // --- Vietnam Time Display ---
         function updateVietnamTime() {
             const options = { 
@@ -598,37 +896,6 @@
 
         updateVietnamTime();
         setInterval(updateVietnamTime, 1000); 
-
-        // --- YouTube Video Player and Link Loader ---
-        loadVideoBtn.addEventListener('click', () => {
-            const link = youtubeLinkInput.value.trim();
-            if (!link) {
-                alert('Please paste a valid YouTube link.');
-                return;
-            }
-
-            let videoId;
-            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-            const match = link.match(regex);
-
-            if (match && match[1]) {
-                videoId = match[1];
-            } else {
-                videoPlayerDiv.innerHTML = `<p style="color: red;">Invalid YouTube link format.</p>`;
-                return;
-            }
-
-            const iframeHTML = `<iframe width="100%" height="200" 
-                src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" 
-                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen></iframe>`;
-                
-            videoPlayerDiv.innerHTML = iframeHTML;
-            
-            if (island.classList.contains('island-expanded')) {
-                startSimulatedSoundwave(); 
-            }
-        });
 
         // --- Text Color Manipulation Functions ---
         function resetText() {
@@ -685,5 +952,4 @@
     </script>
 </body>
 </html>
-</body>
 </html>
