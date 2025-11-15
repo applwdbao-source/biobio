@@ -102,10 +102,10 @@
             scrollbar-width: none; 
         }
 
-        /* 3. Status Bar (Điều chỉnh cho iPhone 17 Pro Max) */
+        /* 3. Status Bar (Không thay đổi) */
         .status-bar {
             position: absolute;
-            top: 15px; /* Giảm top để có nhiều không gian hơn */
+            top: 15px; 
             left: 0;
             width: 100%;
             display: flex;
@@ -114,7 +114,7 @@
             padding: 0 15px;
             color: var(--text-color); 
             font-size: 13px;
-            font-weight: 600; /* Semi-bold for iOS time */
+            font-weight: 600; 
             z-index: 20;
             pointer-events: none;
         }
@@ -126,7 +126,7 @@
             border: 1px solid currentColor;
             border-radius: 3px;
             position: relative;
-            transition: border-color 0.05s linear; /* Để RGB hoạt động */
+            transition: border-color 0.05s linear; 
         }
 
         .battery-cap {
@@ -137,7 +137,7 @@
             top: 4px;
             right: -3px;
             border-radius: 0 1px 1px 0;
-            transition: background-color 0.05s linear; /* Để RGB hoạt động */
+            transition: background-color 0.05s linear; 
         }
 
         .battery-fill {
@@ -165,7 +165,7 @@
 
         /* Signal Bars */
         .signal-bar {
-            width: 1px; /* Rất mỏng */
+            width: 1px; 
             margin: 0 0.5px;
             background-color: currentColor;
             border-radius: 0.5px;
@@ -178,19 +178,19 @@
         .signal-bar-4 { height: 13px; }
 
 
-        /* 4. Vị trí Đảo Động */
+        /* 4. Vị trí Đảo Động (ĐÃ SỬA LỖI VỊ TRÍ) */
         .dynamic-island-wrapper {
             position: absolute;
             width: 100%;
-            padding-top: 10px; /* Cân bằng lại với Status Bar mới */
+            top: 10px; /* Đặt Dynamic Island ở vị trí cố định, không phụ thuộc vào padding-top */
             text-align: center;
             z-index: 10;
         }
         
-        /* Camera/Sensor Notch Area (Luôn hiển thị notch đen) */
+        /* Camera/Sensor Notch Area (Notch gốc - sẽ bị Dynamic Island che khi hoạt động) */
         #dynamic-island-notch {
             position: absolute;
-            top: 0;
+            top: 5px; /* Điều chỉnh vị trí Y của Notch gốc */
             left: 50%;
             transform: translateX(-50%);
             width: 120px;
@@ -215,6 +215,7 @@
             overflow: hidden; 
             position: relative;
             z-index: 10;
+            top: 5px; /* Cần thiết để island nằm ngang hàng với notch */
         }
         
         #island-content {
@@ -225,12 +226,14 @@
             transition: opacity 0.3s ease;
         }
 
-        /* --- TRẠNG THÁI 1: THU GỌN (Nhỏ nhất - Giống Notch) --- */
+        /* --- TRẠNG THÁI 1: THU GỌN (ĐÃ SỬA LỖI CĂN CHỈNH) --- */
         .island-collapsed {
             width: 45px; 
             height: 32px;
             padding: 0;
-            margin-left: 75px; 
+            margin-left: 0px; 
+            /* Dùng transform để di chuyển DI Collapsed vào đúng vị trí của lỗ khoét camera */
+            transform: translateX(45px); 
         }
         
         /* --- TRẠNG THÁI 2: ĐANG PHÁT NHẠC (Viên thuốc trung bình) --- */
@@ -238,7 +241,8 @@
             width: 170px; 
             height: 36px;
             padding: 0 10px;
-            margin-left: -5px; 
+            margin-left: 0; 
+            transform: translateX(0); /* Reset transform */
             justify-content: space-between;
         }
         
@@ -250,7 +254,7 @@
             animation: soundwave 0.5s infinite alternate;
             transform-origin: bottom;
             border-radius: 1px;
-            transition: background-color 0.05s linear; /* Để RGB hoạt động */
+            transition: background-color 0.05s linear; 
         }
 
         .bar:nth-child(1) { height: 8px; animation-delay: 0.1s; }
@@ -273,6 +277,7 @@
             flex-direction: column;
             align-items: flex-start;
             margin: 0;
+            transform: translateX(0); /* Reset transform */
             cursor: default; 
         }
         
@@ -677,7 +682,7 @@
                 timeZone: 'Asia/Ho_Chi_Minh', 
                 hour: '2-digit', 
                 minute: '2-digit', 
-                hour12: false // Giống iOS (Mặc định 24h trừ khi có cài đặt AM/PM)
+                hour12: false 
             };
             const vnTime = new Date().toLocaleTimeString('en-US', options);
             timeDisplay.textContent = vnTime;
@@ -760,7 +765,7 @@
             }
         }
 
-        // --- Logic Dynamic Island (Giữ nguyên) ---
+        // --- Logic Dynamic Island (Đã sửa lỗi hiển thị Collapsed) ---
 
         // Hàm định dạng thời gian
         function formatTime(totalSeconds) {
@@ -793,25 +798,33 @@
             island.classList.remove('island-playing-shrunk', 'island-expanded', 'island-collapsed');
             musicPlayingShrunkContent.style.display = 'none';
             musicExpandedPlayer.style.display = 'none';
-            islandNotch.style.opacity = '1';
+            
+            // --- Logic Sửa Lỗi Notch ---
+            
+            if (islandState === 0) {
+                 island.style.opacity = '0'; // Ẩn DI để chỉ lộ Notch gốc
+                 islandNotch.style.opacity = '1'; // Hiện Notch gốc
+                 stopMusicRgbAndProgress();
+                 
+            } else {
+                 island.style.opacity = '1'; // Hiện DI
+                 islandNotch.style.opacity = '0'; // Ẩn Notch gốc
+                 startMusicRgbAndProgress();
+            }
+
+            // --- Cập nhật Class và Display ---
             
             switch (islandState) {
-                case 0: // Collapsed
+                case 0: // Collapsed (Chỉ lộ Notch)
                     island.classList.add('island-collapsed');
-                    islandNotch.style.opacity = '1';
-                    stopMusicRgbAndProgress();
                     break;
                 case 1: // Playing Shrunk
                     island.classList.add('island-playing-shrunk');
                     musicPlayingShrunkContent.style.display = 'flex';
-                    islandNotch.style.opacity = '0';
-                    startMusicRgbAndProgress();
                     break;
                 case 2: // Expanded
                     island.classList.add('island-expanded');
                     musicExpandedPlayer.style.display = 'flex';
-                    islandNotch.style.opacity = '0';
-                    startMusicRgbAndProgress();
                     break;
             }
         }
@@ -854,7 +867,6 @@
         }
         
         function startMusicRgbAndProgress() {
-            startProgress();
             
             if (headerRgbInterval) return; 
             
@@ -884,6 +896,11 @@
 
                 step += 0.05; 
             }, 50);
+            
+            // Luôn đảm bảo tiến trình chạy khi RGB/Nhạc được bật
+            if (islandState !== 0) {
+                 startProgress();
+            }
         }
 
         function stopMusicRgbAndProgress() {
@@ -925,6 +942,7 @@
         
         // Click vào Dynamic Island để chuyển trạng thái 1 <-> 2
         island.addEventListener('click', () => {
+            // Chỉ chuyển trạng thái nếu không phải trạng thái 0 (Collapsed)
             if (islandState === 1) {
                 setIslandState(2);
             } else if (islandState === 2) {
@@ -1125,8 +1143,5 @@
     </script>
 </body>
 </html>
-```eof
-
-Bạn có muốn tôi giúp gì thêm với các tính năng này không, ví dụ như **thay đổi giao diện Facebook** hay **thêm hiệu ứng rung phản hồi** khi nhấn vào Dynamic Island?
 </body>
 </html>
