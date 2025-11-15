@@ -41,12 +41,29 @@
             background-color: var(--bg-color); 
             margin: 0;
             font-family: Arial, sans-serif;
-            transition: background-color 0.3s ease; /* Smooth transition for theme change */
+            transition: background-color 0.3s ease; 
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        /* NEW: Music Glow Background */
+        #music-glow-background {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent; 
+            filter: blur(100px) opacity(0); 
+            transition: background 0.5s ease-out, filter 0.5s ease-out; 
+            z-index: 0; 
+            pointer-events: none; 
         }
 
         /* 1. The Phone's Outer Body */
         .iphone-container {
             position: relative;
+            z-index: 1; 
         }
 
         .iphone-frame {
@@ -66,7 +83,7 @@
         .screen {
             width: 100%;
             height: 100%;
-            background: var(--card-bg); /* Screen background uses card_bg for theme */
+            background: var(--card-bg); 
             border-radius: 50px; 
             position: relative;
             overflow-y: scroll; 
@@ -103,7 +120,7 @@
             transition: all 0.3s ease-in-out; 
             cursor: pointer;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-            overflow: hidden; /* Hide overflow content when collapsed */
+            overflow: hidden; 
         }
 
         #vietnam-time {
@@ -434,7 +451,7 @@
             display: block;
         }
 
-        #song-artist-info { /* NEW STYLE for Song/Artist */
+        #song-artist-info { 
             font-size: 14px;
             color: #606770;
             margin-top: -5px;
@@ -506,6 +523,9 @@
     </style>
 </head>
 <body class=""> 
+    
+    <div id="music-glow-background"></div>
+
     <div class="iphone-container">
         <div class="iphone-frame">
             <div class="screen">
@@ -667,9 +687,9 @@
         const audioDot = document.getElementById('audio-active-dot');
         const expandedTrackTitle = document.getElementById('expandedTrackTitle');
         const expandedTrackArtist = document.getElementById('expandedTrackArtist');
-        const expandedTrackLabel = document.getElementById('expanded-track-label'); // "Media Player" label
+        const expandedTrackLabel = document.getElementById('expanded-track-label'); 
 
-        // NEW Post Card Info
+        // Post Card Info
         const songArtistInfo = document.getElementById('song-artist-info');
 
         // Soundwave elements
@@ -677,6 +697,9 @@
         const expandedSoundwaveContainer = document.getElementById('expanded-visualizer');
         let shrunkSoundwaveBars; 
         let expandedSoundwaveBars; 
+
+        // Music Glow Background element
+        const musicGlowBackground = document.getElementById('music-glow-background');
 
 
         // --- Profile Elements ---
@@ -703,7 +726,7 @@
         let headerRgbInterval; 
         let soundwaveAnimationInterval; 
         let isNightMode = false;
-        let hue = 0;
+        let hue = 0; // Global hue for all color animations
         let musicActive = false; 
         let islandState = 'collapsed'; 
         let currentTrackTitle = "Song Title";
@@ -731,20 +754,21 @@
                 musicExpandedCard.style.display = 'none';
                 timeDisplay.style.display = 'block'; 
                 stopSoundwave(); 
+                stopMusicGlow(); 
 
             } else if (islandState === 'shrunk-music' && isMusicPlaying) {
-                // Small music pill state
                 musicShrunkInfo.style.display = 'flex';
                 musicExpandedCard.style.display = 'none';
                 timeDisplay.style.display = 'block';
                 startSoundwave(shrunkSoundwaveBars, shrunkSoundwaveContainer.clientHeight); 
+                startMusicGlow(); 
 
             } else if (islandState === 'expanded-music' && isMusicPlaying) {
-                // Full player card state
                 musicShrunkInfo.style.display = 'none';
                 musicExpandedCard.style.display = 'flex';
                 timeDisplay.style.display = 'none';
                 startSoundwave(expandedSoundwaveBars, expandedSoundwaveContainer.clientHeight); 
+                startMusicGlow(); 
             
             } else {
                 islandState = 'collapsed';
@@ -831,9 +855,8 @@
                 
             videoPlayerDiv.innerHTML = iframeHTML;
             
-            updateTrackInfo(title, artist); // Update display with new info
+            updateTrackInfo(title, artist); 
             
-            // Activate music status and switch island to shrunk music mode
             musicActive = true; 
             islandState = 'shrunk-music';
             updateIslandClasses();
@@ -858,13 +881,18 @@
                 hue = (hue + 5) % 360; 
                 const baseColor = `hsl(${hue}, 100%, 70%)`;
                 audioDot.style.backgroundColor = baseColor; 
+                
+                // NEW: Update background glow color with every tick
+                updateMusicGlow();
 
                 bars.forEach((bar, index) => {
-                    // Random height for each bar, relative to the container's height
-                    const randomHeight = Math.floor(Math.random() * (maxHeight * 0.9 - 2)) + 2; 
+                    // *** MODIFIED LINE FOR STRONGER SOUNDWAVES ***
+                    // We use maxHeight * 1.5 to allow bars to stretch beyond the container height for a 'stronger' effect
+                    const randomHeight = Math.floor(Math.random() * (maxHeight * 1.5 - 5)) + 5; 
+                    // **********************************************
+                    
                     bar.style.height = `${randomHeight}px`;
                     
-                    // Simple color variation based on index or position in the bar set
                     const barHue = (hue + (index * 15)) % 360; 
                     bar.style.backgroundColor = `hsl(${barHue}, 100%, 70%)`;
                 });
@@ -876,12 +904,34 @@
                 clearInterval(soundwaveAnimationInterval);
                 soundwaveAnimationInterval = null;
             }
-            // Reset bar heights and hide containers
+            songArtistInfo.style.display = 'none';
+            musicActive = false;
             shrunkSoundwaveBars.forEach(bar => bar.style.height = '2px');
             expandedSoundwaveBars.forEach(bar => bar.style.height = '2px');
             shrunkSoundwaveContainer.style.display = 'none';
             expandedSoundwaveContainer.style.display = 'none';
         }
+
+
+        // --- Music Glow Background Logic ---
+        function updateMusicGlow() {
+            // Create a wide, soft rainbow gradient using the current hue
+            const color1 = `hsl(${hue}, 80%, 30%)`;
+            const color2 = `hsl(${(hue + 60) % 360}, 80%, 30%)`;
+            const color3 = `hsl(${(hue + 120) % 360}, 80%, 30%)`;
+
+            musicGlowBackground.style.background = `radial-gradient(circle at 50% 50%, ${color1} 0%, ${color2} 50%, ${color3} 100%)`;
+        }
+        
+        function startMusicGlow() {
+            musicGlowBackground.style.filter = 'blur(100px) opacity(0.8)'; // Make it visible
+            updateMusicGlow(); // Initial color set
+        }
+
+        function stopMusicGlow() {
+            musicGlowBackground.style.filter = 'blur(100px) opacity(0)'; // Fade out
+        }
+
 
         // --- Profile & Color Logic ---
         
