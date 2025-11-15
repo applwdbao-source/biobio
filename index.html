@@ -1,337 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trần Duy Bảo's Dynamic FB</title>
-    
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f2f5; /* Light background */
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        /* 1. The Phone's Outer Body */
-        .iphone-container {
-            position: relative;
-        }
-
-        .iphone-frame {
-            /* Dimensions typical of a large modern phone */
-            width: 390px;
-            height: 800px;
-            
-            /* Appearance */
-            background: #000; /* Outer black bezel */
-            border: 10px solid #222; /* Inner frame border */
-            border-radius: 60px;
-            box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.5), 
-                inset 0 0 10px rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden; /* Keeps the screen content inside */
-        }
-
-        /* 2. The Screen Area */
-        .screen {
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            border-radius: 50px; /* Slightly smaller than the frame */
-            position: relative;
-            overflow-y: scroll; /* Allows for scrolling Facebook content */
-            overflow-x: hidden;
-        }
-
-        /* 3. Dynamic Island Base Position */
-        .dynamic-island-wrapper {
-            position: absolute;
-            width: 100%;
-            padding-top: 15px; 
-            text-align: center;
-            z-index: 10;
-        }
-
-        #dynamic-island {
-            /* Centered in the wrapper */
-            display: inline-flex; 
-            align-items: center;
-            justify-content: center;
-            
-            /* Appearance */
-            background: #000;
-            color: white;
-            border-radius: 20px; 
-            transition: all 0.3s ease-in-out; /* Smooth transition for expansion */
-            cursor: pointer;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Island State: Collapsed (Default) */
-        .island-collapsed {
-            width: 120px;
-            height: 32px;
-        }
-        
-        /* Island State: Expanded */
-        .island-expanded {
-            width: 350px; /* Wider when expanded */
-            height: 90px;
-            border-radius: 40px;
-        }
-
-        /* Island Content Layout */
-        #island-content {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            padding: 0 8px;
-            width: 100%;
-            justify-content: space-between;
-            transition: opacity 0.3s ease;
-        }
-
-        #audio-visualizer {
-            /* Style for the visualizer area */
-            display: none; /* Initially hidden */
-            width: 100px; 
-            height: 50px;
-            border-radius: 10px;
-            background: #1a1a1a;
-        }
-        
-        /* Simulated Soundwave Animation (used in JavaScript) */
-        @keyframes pulse {
-            0% { transform: scaleY(1); opacity: 0.8; }
-            50% { transform: scaleY(1.2); opacity: 1; }
-            100% { transform: scaleY(1); opacity: 0.8; }
-        }
-        .simulated-soundwave {
-            animation: pulse 1s infinite alternate;
-            background-image: linear-gradient(to right, #007bff, #1877f2, #007bff);
-        }
-
-        /* --- FACEBOOK APP STYLING --- */
-
-        /* 1. Base App Area */
-        .facebook-app {
-            padding-top: 55px; /* Adjust this to sit below the expanded island */
-            height: calc(100% - 55px);
-            background-color: #f0f2f5; /* Classic light gray FB background */
-        }
-
-        /* 2. Header (Logo) */
-        .fb-header {
-            background-color: #ffffff; /* White header bar */
-            padding: 10px 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            position: sticky; /* Sticky header for realism */
-            top: 0;
-            z-index: 5;
-        }
-
-        .fb-logo {
-            font-size: 26px;
-            font-weight: bold;
-            color: #1877f2; /* Classic Facebook Blue */
-            text-align: left;
-        }
-
-        /* 3. Post Card Container */
-        .fb-post-card {
-            background-color: #ffffff;
-            margin: 10px 0;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-        }
-
-        /* 4. Profile Row */
-        .post-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .profile-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-            border: 1px solid #eee;
-        }
-
-        .user-details {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .user-name {
-            font-weight: 700;
-            font-size: 14px;
-            color: #050505;
-            margin-right: 5px;
-        }
-
-        .verified-tick {
-            /* Verified Blue Tick Styling */
-            font-size: 12px;
-            color: #1877f2; /* Facebook Blue */
-            font-weight: 900;
-            background-color: white;
-            border-radius: 50%;
-            line-height: 1;
-            padding: 1px;
-            margin-top: -3px; /* Slightly lift it */
-        }
-
-        .post-time {
-            font-size: 12px;
-            color: #606770;
-            width: 100%; /* forces it to a new line */
-        }
-
-        /* 5. Post Content */
-        .post-content {
-            margin-bottom: 15px;
-        }
-
-        #video-player {
-            background-color: #000;
-            height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        #video-player iframe {
-            display: block;
-        }
-
-        #target-text {
-            font-size: 18px;
-            font-weight: bold;
-            padding: 10px 0;
-            color: #000;
-            transition: color 0.3s ease; /* For smooth color changes */
-        }
-
-
-        /* 6. Action Buttons and Input */
-        .post-actions-bar {
-            padding-top: 10px;
-            border-top: 1px solid #f0f2f5;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .action-btn {
-            background-color: #e4e6eb;
-            color: #000;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background-color 0.2s;
-        }
-
-        .action-btn:hover {
-            background-color: #d8dade;
-        }
-
-        .video-btn, .avatar-btn {
-            background-color: #1877f2;
-            color: white;
-        }
-
-        .video-btn:hover, .avatar-btn:hover {
-            background-color: #166fe5;
-        }
-
-        #youtube-link-input {
-            flex-grow: 1; /* Takes up available space */
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 12px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="iphone-container">
-        <div class="iphone-frame">
-            <div class="screen">
-                
-                <div class="dynamic-island-wrapper">
-                    <div id="dynamic-island" class="island-collapsed">
-                        <div id="island-content">
-                            <span id="vietnam-time">10:09</span>
-                            <canvas id="audio-visualizer"></canvas> 
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="facebook-app">
-                    
-                    <div class="fb-header">
-                        <h1 class="fb-logo">facebook</h1>
-                    </div>
-
-                    <div class="fb-post-card">
-                        
-                        <div class="post-header">
-                            <img id="avatar-image" src="https://via.placeholder.com/50/007bff/ffffff?text=TD" alt="User Avatar" class="profile-avatar">
-                            <div class="user-details">
-                                <span class="user-name">Trần Duy Bảo</span>
-                                <span class="verified-tick" title="Verified">✓</span>
-                                <p class="post-time">1 min ago</p>
-                            </div>
-                        </div>
-                        
-                        <div class="post-content">
-                            <div id="video-player">
-                                <p>Paste a YouTube link below and press 'Load Video'</p>
-                            </div>
-                            <h3 id="target-text">This is the text that will change colors!</h3>
-                        </div>
-                        
-                        <div class="post-actions-bar">
-                            
-                            <div class="color-buttons">
-                                <button id="rainbow-text-btn" class="action-btn">🌈 Rainbow</button>
-                                <button id="rgb-text-btn" class="action-btn">🎨 RGB Cycle</button>
-                                <button id="random-text-btn" class="action-btn">🎲 Random</button>
-                            </div>
-                            
-                            <input type="text" id="youtube-link-input" placeholder="Paste YouTube Link">
-                            <button id="load-video-btn" class="action-btn video-btn">▶ Load Video</button>
-                            
-                            <button id="change-avatar-btn" class="action-btn avatar-btn">🖼 Change Avatar</button>
-                        </div>
-                        
-                    </div>
-                    
-                </div>
-                
-            </div>
-        </div>
-    </div>
-
-    <script>
+<script>
+        const body = document.body;
         const island = document.getElementById('dynamic-island');
         const timeDisplay = document.getElementById('vietnam-time');
         const islandContent = document.getElementById('island-content');
@@ -345,13 +13,68 @@
         const rainbowBtn = document.getElementById('rainbow-text-btn');
         const rgbBtn = document.getElementById('rgb-text-btn');
         const randomBtn = document.getElementById('random-text-btn');
+        const toggleNightModeBtn = document.getElementById('toggle-night-mode-btn');
+        const userNameSpan = document.getElementById('userName');
+        const verifiedTickSpan = document.getElementById('verifiedTick');
+        const nameColorInput = document.getElementById('name-color-input');
+        const tickColorInput = document.getElementById('tick-color-input');
 
-        let rgbInterval; // Variable to hold the RGB cycle interval
+        let rgbInterval; 
+        let isNightMode = false;
+        let soundwaveColorInterval; // New interval for color cycling
+        let hue = 0; // Starting hue for the soundwave
 
-        // --- 1. Dynamic Island Collapse/Expand Toggle ---
+        // --- Night Mode Toggle ---
+        toggleNightModeBtn.addEventListener('click', () => {
+            isNightMode = !isNightMode;
+            body.classList.toggle('night-mode', isNightMode);
+            toggleNightModeBtn.textContent = isNightMode ? '☀️ Light Mode' : '🌙 Night Mode';
+            updateNameAndTickColors();
+        });
+
+        // --- Custom Name and Tick Color Update ---
+        function updateNameAndTickColors() {
+            userNameSpan.style.color = nameColorInput.value;
+            const newTickColor = tickColorInput.value;
+            const svgData = encodeURIComponent(`
+                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+                    <path fill='${newTickColor}' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.707 7.707-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11.5 12.086l3.293-3.293a1 1 0 0 1 1.414 1.414z'/>
+                </svg>
+            `);
+            verifiedTickSpan.style.backgroundImage = `url("data:image/svg+xml,${svgData}")`;
+        }
+
+        nameColorInput.addEventListener('input', updateNameAndTickColors);
+        tickColorInput.addEventListener('input', updateNameAndTickColors);
+        updateNameAndTickColors();
+
+        // --- 1. Dynamic Island Logic (Soundwave Color & Toggle) ---
+
+        function updateSoundwaveColor() {
+            hue = (hue + 2) % 360; // Increment hue by 2 for a smooth cycle
+            const color1 = `hsl(${hue}, 100%, 50%)`;
+            const color2 = `hsl(${(hue + 60) % 360}, 100%, 50%)`; // Secondary color offset
+            const color3 = `hsl(${(hue + 120) % 360}, 100%, 50%)`; // Tertiary color offset
+
+            // Apply the flowing rainbow using a CSS background gradient
+            visualizerCanvas.style.backgroundImage = `linear-gradient(to right, ${color1}, ${color2}, ${color3}, ${color2}, ${color1})`;
+        }
+
         function startSimulatedSoundwave() {
             visualizerCanvas.style.display = 'block'; 
             visualizerCanvas.classList.add('simulated-soundwave');
+            
+            // Start the color cycling effect if not already running
+            if (!soundwaveColorInterval) {
+                soundwaveColorInterval = setInterval(updateSoundwaveColor, 100); // Update color every 100ms
+            }
+        }
+        
+        function stopSimulatedSoundwave() {
+            clearInterval(soundwaveColorInterval);
+            soundwaveColorInterval = null;
+            visualizerCanvas.classList.remove('simulated-soundwave');
+            visualizerCanvas.style.display = 'none';
         }
 
         island.addEventListener('click', () => {
@@ -361,15 +84,14 @@
             const isExpanded = island.classList.contains('island-expanded');
             
             if (isExpanded) {
-                // Show time and visualizer when expanded
                 timeDisplay.style.display = 'block';
                 if (videoPlayerDiv.querySelector('iframe')) {
+                    // Start soundwave only if expanded AND video is loaded
                     startSimulatedSoundwave();
                 }
             } else {
-                // When collapsed, hide the visualizer
-                visualizerCanvas.style.display = 'none';
-                visualizerCanvas.classList.remove('simulated-soundwave');
+                // Stop soundwave when collapsed
+                stopSimulatedSoundwave();
             }
         });
 
@@ -379,9 +101,8 @@
                 timeZone: 'Asia/Ho_Chi_Minh', 
                 hour: '2-digit', 
                 minute: '2-digit', 
-                hour12: false // Use 24-hour format
+                hour12: false 
             };
-            
             const vnTime = new Date().toLocaleTimeString('en-US', options);
             timeDisplay.textContent = vnTime;
         }
@@ -414,7 +135,11 @@
                 allowfullscreen></iframe>`;
                 
             videoPlayerDiv.innerHTML = iframeHTML;
-            startSimulatedSoundwave(); // Start simulation after video load
+            
+            // Ensure soundwave starts and is visible if the island is currently expanded
+            if (island.classList.contains('island-expanded')) {
+                startSimulatedSoundwave(); 
+            }
         });
 
         // --- 4. Avatar Changer ---
@@ -427,11 +152,10 @@
         });
 
         // --- 5. Text Color Manipulation Functions ---
-
         function resetText() {
             clearInterval(rgbInterval); 
             targetText.innerHTML = targetText.textContent; 
-            targetText.style.color = '#000'; 
+            targetText.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color'); 
         }
 
         // A. Rainbow Text (Static Gradient)
@@ -480,5 +204,3 @@
         rgbBtn.addEventListener('click', () => setRgbCycleText(targetText));
         randomBtn.addEventListener('click', () => setRandomText(targetText));
     </script>
-</body>
-</html>
