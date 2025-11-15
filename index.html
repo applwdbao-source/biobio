@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trần Duy Bảo's Dynamic FB</title>
+    <title>ApplwNgoo Iphone</title>
     
     <style>
         /* CSS Variables for theming */
@@ -147,7 +147,7 @@
         }
         .simulated-soundwave {
             animation: pulse 1s infinite alternate;
-            /* Default gradient set via JS now */
+            /* Gradient set via JS */
         }
 
         /* --- FACEBOOK APP STYLING --- */
@@ -209,7 +209,7 @@
         .user-name {
             font-weight: 700;
             font-size: 14px;
-            color: var(--text-color); /* Uses theme text color by default */
+            color: var(--text-color); 
             margin-right: 5px;
             transition: color 0.3s ease;
         }
@@ -340,7 +340,7 @@
                         <div class="post-header">
                             <img id="avatar-image" src="https://via.placeholder.com/50/007bff/ffffff?text=TD" alt="User Avatar" class="profile-avatar">
                             <div class="user-details">
-                                <span class="user-name" id="userName">Trần Duy Bảo</span>
+                                <span class="user-name" id="userName">ApplwNgoo</span>
                                 <span class="verified-tick" id="verifiedTick" title="Verified"></span>
                                 <p class="post-time">1 min ago</p>
                             </div>
@@ -350,30 +350,32 @@
                             <div id="video-player">
                                 <p>Paste a YouTube link below and press 'Load Video'</p>
                             </div>
-                            <h3 id="target-text">This is the text that will change colors!</h3>
+                            <h3 id="target-text">Iphone của bạn!</h3>
                         </div>
                         
                         <div class="post-actions-bar">
                             
-                            <button id="rgb-header-btn" class="action-btn video-btn">🌈 Cycle Header</button>
+                            <button id="change-name-btn" class="action-btn avatar-btn">👤 Đổi tên FB</button>
+                            <input type="file" id="avatar-file-input" accept="image/*" style="display: none;">
+                            <button id="upload-avatar-btn" class="action-btn avatar-btn">📷 Đổi Avatar</button>
+                            
+                            <button id="rgb-header-btn" class="action-btn video-btn">🌈 Tên Rainbow</button>
 
                             <div class="color-buttons">
                                 <button id="rainbow-text-btn" class="action-btn">🌈 Rainbow</button>
-                                <button id="rgb-text-btn" class="action-btn">🎨 RGB Cycle</button>
+                                <button id="rgb-text-btn" class="action-btn">🎨 RGB </button>
                                 <button id="random-text-btn" class="action-btn">🎲 Random</button>
                             </div>
                             
                             <input type="text" id="youtube-link-input" placeholder="Paste YouTube Link">
                             <button id="load-video-btn" class="action-btn video-btn">▶ Load Video</button>
                             
-                            <button id="change-avatar-btn" class="action-btn avatar-btn">🖼 Change Avatar</button>
-                            
                             <button id="toggle-night-mode-btn" class="action-btn">🌙 Night Mode</button>
                             
                             <div style="width: 100%; display: flex; gap: 8px; margin-top: 5px; align-items: center;">
-                                <label for="name-color-input" style="font-size: 12px; color: var(--text-color);">Name Color:</label>
+                                <label for="name-color-input" style="font-size: 12px; color: var(--text-color);">Màu tên:</label>
                                 <input type="color" id="name-color-input" value="#050505">
-                                <label for="tick-color-input" style="font-size: 12px; color: var(--text-color);">Tick Color:</label>
+                                <label for="tick-color-input" style="font-size: 12px; color: var(--text-color);">Màu tick:</label>
                                 <input type="color" id="tick-color-input" value="#1877f2">
                             </div>
                         </div>
@@ -387,6 +389,7 @@
     </div>
 
     <script>
+        // --- Element Selection ---
         const body = document.body;
         const island = document.getElementById('dynamic-island');
         const timeDisplay = document.getElementById('vietnam-time');
@@ -394,39 +397,93 @@
         const youtubeLinkInput = document.getElementById('youtube-link-input');
         const loadVideoBtn = document.getElementById('load-video-btn');
         const videoPlayerDiv = document.getElementById('video-player');
-        const changeAvatarBtn = document.getElementById('change-avatar-btn');
-        const avatarImage = document.getElementById('avatar-image');
+        
+        // --- NEW/UPDATED Elements ---
+        const changeNameBtn = document.getElementById('change-name-btn'); // NEW
+        const uploadAvatarBtn = document.getElementById('upload-avatar-btn'); // NEW
+        const avatarFileInput = document.getElementById('avatar-file-input'); // NEW
+        const avatarImage = document.getElementById('avatar-image'); // Existing element
+        const userNameSpan = document.getElementById('userName'); // Existing element
+
+        // --- Color Elements ---
         const targetText = document.getElementById('target-text');
         const rainbowBtn = document.getElementById('rainbow-text-btn');
         const rgbBtn = document.getElementById('rgb-text-btn');
         const randomBtn = document.getElementById('random-text-btn');
         const toggleNightModeBtn = document.getElementById('toggle-night-mode-btn');
-        const rgbHeaderBtn = document.getElementById('rgb-header-btn'); // NEW
-        const userNameSpan = document.getElementById('userName');
+        const rgbHeaderBtn = document.getElementById('rgb-header-btn'); 
         const verifiedTickSpan = document.getElementById('verifiedTick');
         const nameColorInput = document.getElementById('name-color-input');
         const tickColorInput = document.getElementById('tick-color-input');
 
+        // --- State Variables ---
         let rgbInterval;
-        let headerRgbInterval; // NEW interval for header elements
+        let headerRgbInterval; 
         let soundwaveColorInterval;
         let isNightMode = false;
         let hue = 0;
 
-        // --- Utility Functions ---
 
-        // Helper to reset the default header/profile colors
+        // ===================================
+        // --- NEW NAME AND AVATAR LOGIC ---
+        // ===================================
+
+        // 1. Change Name Function
+        changeNameBtn.addEventListener('click', () => {
+            const newName = prompt('Enter the new name for your Facebook profile:');
+            
+            if (newName && newName.trim() !== "") {
+                userNameSpan.textContent = newName.trim();
+            } else if (newName !== null) {
+                alert('Name cannot be empty.');
+            }
+        });
+
+        // 2. Avatar File Uploader (Local File Upload)
+        uploadAvatarBtn.addEventListener('click', () => {
+            // Programmatically click the hidden file input
+            avatarFileInput.click();
+        });
+
+        avatarFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            
+            if (file) {
+                // Check if the file is an image
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file.');
+                    // Clear the file input
+                    avatarFileInput.value = ''; 
+                    return;
+                }
+
+                // FileReader reads the contents of the file
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    // e.target.result contains the data URL (base64)
+                    avatarImage.src = e.target.result;
+                };
+                
+                // Read the file as a Data URL
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // ===================================
+        // --- EXISTING COLOR/THEME LOGIC ---
+        // ===================================
+
+        // --- Utility Functions ---
         function resetHeaderColors() {
             clearInterval(headerRgbInterval);
             headerRgbInterval = null;
-            // Reset to the color values from the input fields
             timeDisplay.style.color = 'white'; 
             updateNameAndTickColors();
         }
 
         // --- Custom Name and Tick Color Update (Used for inputs AND RGB cycle) ---
         function updateNameAndTickColors(nameColor, tickColor) {
-            // Use provided colors, or fall back to input values if none provided (i.e., when inputs are used)
             const newNameColor = nameColor || nameColorInput.value;
             const newTickColor = tickColor || tickColorInput.value;
 
@@ -441,10 +498,10 @@
             verifiedTickSpan.style.backgroundImage = `url("data:image/svg+xml,${svgData}")`;
         }
 
-        // --- Header RGB Cycle Logic (NEW) ---
+        // --- Header RGB Cycle Logic ---
         function startHeaderRgbCycle() {
             if (headerRgbInterval) {
-                resetHeaderColors(); // Stop if already running
+                resetHeaderColors(); 
                 return;
             }
 
@@ -456,13 +513,10 @@
                 
                 const rgbString = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
 
-                // Apply to clock
                 timeDisplay.style.color = rgbString;
-                
-                // Apply to name and tick
                 updateNameAndTickColors(rgbString, rgbString);
 
-                step += 0.05; // Control animation speed
+                step += 0.05; 
             }, 50);
         }
 
@@ -475,7 +529,7 @@
             resetHeaderColors();
             updateNameAndTickColors();
         });
-        rgbHeaderBtn.addEventListener('click', startHeaderRgbCycle); // NEW Button Listener
+        rgbHeaderBtn.addEventListener('click', startHeaderRgbCycle); 
 
         updateNameAndTickColors(); // Initial call
 
@@ -484,7 +538,7 @@
             isNightMode = !isNightMode;
             body.classList.toggle('night-mode', isNightMode);
             toggleNightModeBtn.textContent = isNightMode ? '☀️ Light Mode' : '🌙 Night Mode';
-            resetHeaderColors(); // Stop header cycle when toggling theme
+            resetHeaderColors(); 
             updateNameAndTickColors();
         });
 
@@ -573,15 +627,6 @@
             
             if (island.classList.contains('island-expanded')) {
                 startSimulatedSoundwave(); 
-            }
-        });
-
-        // --- Avatar Changer ---
-        changeAvatarBtn.addEventListener('click', () => {
-            const newURL = prompt('Enter the new image URL for your Facebook avatar:');
-            
-            if (newURL) {
-                avatarImage.src = newURL;
             }
         });
 
